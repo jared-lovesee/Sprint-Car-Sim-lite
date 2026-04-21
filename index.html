@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1100">
+<title>Sprint Car Sim · Lite</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0b;
+  --panel: #111114;
+  --panel2: #161619;
+  --border: #1e1e24;
+  --border2: #2a2a32;
+  --text: #e8e8f0;
+  --muted: #7a7a85;
+  --muted2: #555560;
+  --accent: #e8ff47;
+  --accent2: #ff5c2b;
+  --good: #47ffb2;
+  --warn: #ffb347;
+  --alert: #ff5c6b;
+  --lf: #4facff;
+  --rf: #ff6b9d;
+  --lr: #4fffb0;
+  --rr: #ffcc4f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-left { display: flex; align-items: baseline; gap: 16px; }
+.logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.header-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+.lite-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #000;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: 6px;
+}
+.upgrade-btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.upgrade-btn:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.section-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--panel2);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.section-hdr-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.section-hdr-num {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 3px;
+  text-align: center;
+  line-height: 18px;
+  font-size: 11px;
+}
+.collapse-arrow {
+  font-size: 12px;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.section.closed .collapse-arrow { transform: rotate(-90deg); }
+.section-body {
+  padding: 16px 18px;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+  overflow: hidden;
+}
+.section.closed .section-body {
+  max-height: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.section-summary {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-left: 10px;
+}
+
+/* Input groups */
+.input-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.input-row:last-child { margin-bottom: 0; }
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.input-group label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.input-group .unit {
+  color: var(--muted2);
+  margin-left: 3px;
+}
+
+input[type="number"], select {
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  padding: 5px 8px;
+  width: 85px;
+  text-align: right;
+  outline: none;
+  transition: border-color 0.15s;
+}
+select {
+  text-align: left;
+  width: 130px;
+  padding-right: 18px;
+}
+input[type="number"]:focus, select:focus { border-color: var(--accent); }
+input[type="number"]::-webkit-inner-spin-button { opacity: 0; }
+
+input[type="text"] {
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  padding: 5px 8px;
+  outline: none;
+}
+input[type="text"]:focus { border-color: var(--accent); }
+
+/* Corner weight grid */
+.corner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  max-width: 260px;
+}
+.corner-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.corner-card .cc-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+.corner-card.lf .cc-label { color: var(--lf); }
+.corner-card.rf .cc-label { color: var(--rf); }
+.corner-card.lr .cc-label { color: var(--lr); }
+.corner-card.rr .cc-label { color: var(--rr); }
+.corner-card input { width: 60px; padding: 3px 6px; }
+
+/* Computed summary chips */
+.chip-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border2);
+}
+.chip {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+}
+.chip .chip-label {
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-right: 5px;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+.chip .chip-val {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Wing inputs */
+.wing-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.wing-toggle button {
+  background: var(--panel2);
+  color: var(--muted);
+  border: none;
+  padding: 6px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.wing-toggle button.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+.wing-sub-hdr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border2);
+}
+
+/* Segmented control (for line, bank) */
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.seg button {
+  background: var(--panel2);
+  color: var(--muted);
+  border: none;
+  padding: 5px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-right: 1px solid var(--border2);
+}
+.seg button:last-child { border-right: none; }
+.seg button.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+.seg.seg-sm button {
+  padding: 3px 10px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.spring-unit {
+  color: var(--muted2);
+  font-size: 9px;
+  margin-left: 2px;
+}
+.spring-computed {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--good);
+  letter-spacing: 0.04em;
+}
+
+/* NACA profile visualization */
+.naca-viz {
+  margin-top: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  width: 130px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.naca-viz svg { display: block; }
+
+/* Analysis output */
+.analysis-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--panel2);
+  border-bottom: 1px solid var(--border);
+}
+.analysis-hdr-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.phase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  padding: 18px;
+}
+.phase-card {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  background: var(--bg);
+  transition: border-color 0.2s;
+}
+.phase-card.balanced { border-left-color: var(--good); }
+.phase-card.slight { border-left-color: var(--warn); }
+.phase-card.moderate { border-left-color: var(--accent2); }
+.phase-card.severe { border-left-color: var(--alert); }
+
+.phase-card-hdr {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.phase-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.phase-speed {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted2);
+}
+.phase-verdict {
+  font-family: 'Bebas Neue', 'IBM Plex Mono', sans-serif;
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+.phase-verdict.balanced { color: var(--good); }
+.phase-verdict.slight { color: var(--warn); }
+.phase-verdict.moderate { color: var(--accent2); }
+.phase-verdict.severe { color: var(--alert); }
+.phase-severity {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.load-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.load-cell {
+  background: var(--panel2);
+  border-radius: 3px;
+  padding: 6px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.load-cell .ld-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+.load-cell.lf .ld-label { color: var(--lf); }
+.load-cell.rf .ld-label { color: var(--rf); }
+.load-cell.lr .ld-label { color: var(--lr); }
+.load-cell.rr .ld-label { color: var(--rr); }
+.load-cell .ld-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.factor-list {
+  border-top: 1px dashed var(--border2);
+  padding-top: 10px;
+}
+.factor-list-hdr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.factor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+}
+.factor-name { color: var(--text); }
+.factor-val {
+  color: var(--muted);
+  margin-left: 6px;
+  font-size: 10px;
+}
+.factor-dir {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+.factor-dir.tight { color: var(--alert); background: rgba(255,92,107,0.1); }
+.factor-dir.free { color: var(--lf); background: rgba(79,172,255,0.1); }
+.factor-dir.neutral { color: var(--muted2); }
+
+/* Save / Load */
+.saveload-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.btn {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.btn.primary:hover { background: #f0ff66; }
+.btn.danger:hover { border-color: var(--alert); color: var(--alert); }
+.saveload-row input[type="text"] { flex: 0 0 180px; }
+.saveload-row select { flex: 0 0 200px; }
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-left: 3px solid var(--accent);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 100;
+}
+.toast.show { opacity: 1; }
+
+@media (max-width: 900px) {
+  .phase-grid { grid-template-columns: 1fr; }
+  main { padding: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <span class="logo">Sprint Car Sim</span>
+    <span class="header-title">Balance Analyzer<span class="lite-badge">Lite</span></span>
+  </div>
+  <a href="#" class="upgrade-btn" id="upgradeBtn">Upgrade to Pro →</a>
+</header>
+
+<main>
+
+<!-- ============ 1. CHASSIS ============ -->
+<div class="section" id="sec-chassis">
+  <div class="section-hdr" onclick="toggleSec('sec-chassis')">
+    <div class="section-hdr-left">
+      <span class="section-hdr-num">1</span>
+      <span>Chassis Setup</span>
+      <span class="section-summary" id="chassis-summary"></span>
+    </div>
+    <span class="collapse-arrow">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="input-row">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Corner Weights (lbs)</div>
+        <div class="corner-grid">
+          <div class="corner-card lf">
+            <span class="cc-label">LF</span>
+            <input type="number" id="wLF" value="190" step="1" onchange="update()">
+          </div>
+          <div class="corner-card rf">
+            <span class="cc-label">RF</span>
+            <input type="number" id="wRF" value="175" step="1" onchange="update()">
+          </div>
+          <div class="corner-card lr">
+            <span class="cc-label">LR</span>
+            <input type="number" id="wLR" value="240" step="1" onchange="update()">
+          </div>
+          <div class="corner-card rr">
+            <span class="cc-label">RR</span>
+            <input type="number" id="wRR" value="220" step="1" onchange="update()">
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-left: 10px;">
+        <div class="input-group">
+          <label>Driver Weight <span class="unit">lbs</span></label>
+          <input type="number" id="driverWt" value="160" step="1" onchange="update()">
+        </div>
+        <div class="input-group">
+          <label>Wheelbase <span class="unit">in</span></label>
+          <input type="number" id="wheelbase" value="65" step="0.25" onchange="update()">
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="input-group">
+          <label>Front Track <span class="unit">in</span></label>
+          <input type="number" id="trackF" value="54" step="0.25" onchange="update()">
+        </div>
+        <div class="input-group">
+          <label>Rear Track <span class="unit">in</span></label>
+          <input type="number" id="trackR" value="56" step="0.25" onchange="update()">
+        </div>
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Ride Heights (in)</div>
+        <div style="display: flex; gap: 8px;">
+          <div class="input-group">
+            <label style="color: var(--lf);">LF</label>
+            <input type="number" id="rhLF" value="4.5" step="0.125" onchange="update()">
+          </div>
+          <div class="input-group">
+            <label style="color: var(--rf);">RF</label>
+            <input type="number" id="rhRF" value="4.0" step="0.125" onchange="update()">
+          </div>
+          <div class="input-group">
+            <label style="color: var(--lr);">LR</label>
+            <input type="number" id="rhLR" value="5.5" step="0.125" onchange="update()">
+          </div>
+          <div class="input-group">
+            <label style="color: var(--rr);">RR</label>
+            <input type="number" id="rhRR" value="5.0" step="0.125" onchange="update()">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="input-row">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; min-width: 50px;">Front</span>
+          <div class="seg seg-sm" id="springFrontSeg">
+            <button data-val="coil" class="active" onclick="setSpringMode('front','coil')">Coil</button>
+            <button data-val="torsion" onclick="setSpringMode('front','torsion')">Torsion</button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="input-group">
+              <label style="color: var(--lf);">LF <span class="spring-unit" id="unit-kLF">lb/in</span></label>
+              <input type="number" id="kLF" value="250" step="5" onchange="update()">
+            </div>
+            <div class="input-group">
+              <label style="color: var(--rf);">RF <span class="spring-unit" id="unit-kRF">lb/in</span></label>
+              <input type="number" id="kRF" value="280" step="5" onchange="update()">
+            </div>
+          </div>
+          <span class="spring-computed" id="computed-front"></span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; min-width: 50px;">Rear</span>
+          <div class="seg seg-sm" id="springRearSeg">
+            <button data-val="coil" class="active" onclick="setSpringMode('rear','coil')">Coil</button>
+            <button data-val="torsion" onclick="setSpringMode('rear','torsion')">Torsion</button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <div class="input-group">
+              <label style="color: var(--lr);">LR <span class="spring-unit" id="unit-kLR">lb/in</span></label>
+              <input type="number" id="kLR" value="250" step="5" onchange="update()">
+            </div>
+            <div class="input-group">
+              <label style="color: var(--rr);">RR <span class="spring-unit" id="unit-kRR">lb/in</span></label>
+              <input type="number" id="kRR" value="275" step="5" onchange="update()">
+            </div>
+          </div>
+          <span class="spring-computed" id="computed-rear"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chip-row" id="chassis-chips"></div>
+  </div>
+</div>
+
+<!-- ============ 2. WING ============ -->
+<div class="section" id="sec-wing">
+  <div class="section-hdr" onclick="toggleSec('sec-wing')">
+    <div class="section-hdr-left">
+      <span class="section-hdr-num">2</span>
+      <span>Wing Package</span>
+      <span class="section-summary" id="wing-summary"></span>
+    </div>
+    <span class="collapse-arrow">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="wing-toggle" id="wingToggle">
+      <button class="active" data-val="on" onclick="setWing('on')">Wings ON</button>
+      <button data-val="off" onclick="setWing('off')">Wings OFF</button>
+    </div>
+
+    <div id="wingInputs">
+      <div class="wing-sub-hdr">Top Wing</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Profile</label>
+          <select id="topProfile" onchange="update()"></select>
+          <div class="naca-viz" id="topProfileViz"></div>
+        </div>
+        <div class="input-group">
+          <label>AoA <span class="unit">°</span></label>
+          <input type="number" id="topAoA" value="10" step="0.5" onchange="update()">
+        </div>
+        <div class="input-group">
+          <label>Area <span class="unit">ft²</span></label>
+          <input type="number" id="topArea" value="14" step="0.5" onchange="update()">
+        </div>
+      </div>
+
+      <div class="wing-sub-hdr" style="margin-top: 14px;">Nose Wing</div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Profile</label>
+          <select id="noseProfile" onchange="update()"></select>
+          <div class="naca-viz" id="noseProfileViz"></div>
+        </div>
+        <div class="input-group">
+          <label>AoA <span class="unit">°</span></label>
+          <input type="number" id="noseAoA" value="6" step="0.5" onchange="update()">
+        </div>
+        <div class="input-group">
+          <label>Area <span class="unit">ft²</span></label>
+          <input type="number" id="noseArea" value="4" step="0.25" onchange="update()">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. TRACK & LINE ============ -->
+<div class="section" id="sec-track">
+  <div class="section-hdr" onclick="toggleSec('sec-track')">
+    <div class="section-hdr-left">
+      <span class="section-hdr-num">3</span>
+      <span>Track &amp; Line</span>
+      <span class="section-summary" id="track-summary"></span>
+    </div>
+    <span class="collapse-arrow">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Track Size</label>
+        <div class="seg" id="trackSizeSeg">
+          <button data-val="quarter" class="active" onclick="setSeg('trackSize','quarter')">1/4 mi</button>
+          <button data-val="third" onclick="setSeg('trackSize','third')">1/3 mi</button>
+          <button data-val="half" onclick="setSeg('trackSize','half')">1/2 mi</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Line</label>
+        <div class="seg" id="lineSeg">
+          <button data-val="low" class="active" onclick="setSeg('line','low')">Low</button>
+          <button data-val="high" onclick="setSeg('line','high')">High</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Banking</label>
+        <div class="seg" id="bankSeg">
+          <button data-val="low" onclick="setSeg('bank','low')">Low (1-3-1)</button>
+          <button data-val="mid" class="active" onclick="setSeg('bank','mid')">Mid (3-7-3)</button>
+          <button data-val="high" onclick="setSeg('bank','high')">High (7-12-7)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chip-row" id="track-chips"></div>
+  </div>
+</div>
+
+<!-- ============ 4. CORNER SPEEDS ============ -->
+<div class="section" id="sec-speeds">
+  <div class="section-hdr" onclick="toggleSec('sec-speeds')">
+    <div class="section-hdr-left">
+      <span class="section-hdr-num">4</span>
+      <span>Corner Speeds</span>
+      <span class="section-summary" id="speeds-summary"></span>
+    </div>
+    <span class="collapse-arrow">▼</span>
+  </div>
+  <div class="section-body">
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Entry Speed <span class="unit">mph</span></label>
+        <input type="number" id="spdEntry" value="45" step="1" onchange="update()">
+      </div>
+      <div class="input-group">
+        <label>Apex Speed <span class="unit">mph</span></label>
+        <input type="number" id="spdApex" value="32" step="1" onchange="update()">
+      </div>
+      <div class="input-group">
+        <label>Exit Speed <span class="unit">mph</span></label>
+        <input type="number" id="spdExit" value="50" step="1" onchange="update()">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ANALYSIS OUTPUT ============ -->
+<div class="section">
+  <div class="analysis-hdr">
+    <span class="analysis-hdr-title">Balance Analysis</span>
+    <span class="section-summary" id="analysis-summary"></span>
+  </div>
+  <div class="phase-grid">
+    <div class="phase-card" id="card-entry">
+      <div class="phase-card-hdr">
+        <span class="phase-name">Entry</span>
+        <span class="phase-speed" id="entry-speed">— mph</span>
+      </div>
+      <div class="phase-verdict" id="entry-verdict">—</div>
+      <div class="phase-severity" id="entry-severity">&nbsp;</div>
+      <div class="load-grid" id="entry-loads"></div>
+      <div class="factor-list" id="entry-factors"></div>
+    </div>
+
+    <div class="phase-card" id="card-apex">
+      <div class="phase-card-hdr">
+        <span class="phase-name">Apex</span>
+        <span class="phase-speed" id="apex-speed">— mph</span>
+      </div>
+      <div class="phase-verdict" id="apex-verdict">—</div>
+      <div class="phase-severity" id="apex-severity">&nbsp;</div>
+      <div class="load-grid" id="apex-loads"></div>
+      <div class="factor-list" id="apex-factors"></div>
+    </div>
+
+    <div class="phase-card" id="card-exit">
+      <div class="phase-card-hdr">
+        <span class="phase-name">Exit</span>
+        <span class="phase-speed" id="exit-speed">— mph</span>
+      </div>
+      <div class="phase-verdict" id="exit-verdict">—</div>
+      <div class="phase-severity" id="exit-severity">&nbsp;</div>
+      <div class="load-grid" id="exit-loads"></div>
+      <div class="factor-list" id="exit-factors"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SAVE / LOAD ============ -->
+<div class="section" id="sec-saveload">
+  <div class="section-hdr" onclick="toggleSec('sec-saveload')">
+    <div class="section-hdr-left">
+      <span class="section-hdr-num">5</span>
+      <span>Save &amp; Load Setups</span>
+    </div>
+    <span class="collapse-arrow">▼</span>
+  </div>
+  <div class="section-body">
+    <div class="saveload-row">
+      <input type="text" id="setupName" placeholder="Setup name..." maxlength="40">
+      <button class="btn primary" onclick="saveSetup()">Save</button>
+      <select id="setupList" onchange="onSelectSetup()"><option value="">— Load saved setup —</option></select>
+      <button class="btn danger" onclick="deleteSetup()">Delete</button>
+      <button class="btn" onclick="resetDefaults()">Reset Defaults</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+/* ========================================================================
+   SPRINT CAR SIM · LITE — physics + UI
+   ======================================================================== */
+
+// ── Constants ────────────────────────────────────────────────────────────
+const CG_H        = 12;      // in  (hardcoded per spec)
+const FRONT_RC    = 4;       // in  (hardcoded per spec)
+const REAR_RC     = 10;      // in  (hardcoded per spec)
+const FUEL_LBS    = 30;      // 5 gal * ~6 lb/gal  (already in corner weights)
+const TOP_CHORD_IN  = 36;    // typical top wing chord
+const NOSE_CHORD_IN = 18;    // typical nose wing chord
+const AIR_RHO     = 0.00238; // slug/ft³ at sea level
+const AIR_MU      = 3.78e-7; // slug/(ft·s) dynamic viscosity
+const WING_E      = 0.87;    // span efficiency
+const G_FTS2      = 32.174;
+
+const TRACK_SIZES = {
+  quarter: { length_ft: 1320, width_ft: 30, label: '1/4 mile' },
+  third:   { length_ft: 1760, width_ft: 40, label: '1/3 mile' },
+  half:    { length_ft: 2640, width_ft: 50, label: '1/2 mile' },
+};
+
+const BANK_ANGLES = {
+  low:  { entry: 1, apex: 3,  exit: 1, label: 'Low (1-3-1)' },
+  mid:  { entry: 3, apex: 7,  exit: 3, label: 'Mid (3-7-3)' },
+  high: { entry: 7, apex: 12, exit: 7, label: 'High (7-12-7)' },
+};
+
+const PHASE_RADIUS_MULT = { entry: 1.15, apex: 1.0, exit: 1.35 };
+
+// NACA profiles — copied from Pro tool for consistency
+const PROFILES = {
+  "0012":  { m:0,   p:0,   t:12, cl0:0.00, cl_a:0.110, cd_min:0.0060, stall:16, cd_k:0.010, label: "NACA 0012 (symmetric)" },
+  "2412":  { m:2,   p:4,   t:12, cl0:0.24, cl_a:0.112, cd_min:0.0065, stall:15, cd_k:0.011, label: "NACA 2412" },
+  "4412":  { m:4,   p:4,   t:12, cl0:0.44, cl_a:0.112, cd_min:0.0072, stall:14, cd_k:0.012, label: "NACA 4412" },
+  "6412":  { m:6,   p:4,   t:12, cl0:0.62, cl_a:0.113, cd_min:0.0082, stall:13, cd_k:0.014, label: "NACA 6412 (high-downforce)" },
+  "4415":  { m:4,   p:4,   t:15, cl0:0.44, cl_a:0.110, cd_min:0.0078, stall:15, cd_k:0.013, label: "NACA 4415 (thick)" },
+  "2415":  { m:2,   p:4,   t:15, cl0:0.24, cl_a:0.110, cd_min:0.0068, stall:16, cd_k:0.011, label: "NACA 2415" },
+  "0015":  { m:0,   p:0,   t:15, cl0:0.00, cl_a:0.108, cd_min:0.0065, stall:17, cd_k:0.010, label: "NACA 0015 (symm thick)" },
+  "23012": { m:1.8, p:1.5, t:12, cl0:0.28, cl_a:0.114, cd_min:0.0060, stall:15, cd_k:0.010, label: "NACA 23012" },
+  "63-412":{ m:4,   p:5,   t:12, cl0:0.46, cl_a:0.115, cd_min:0.0055, stall:14, cd_k:0.013, label: "NACA 63-412 (laminar)" },
+  "64-412":{ m:4,   p:5.5, t:12, cl0:0.48, cl_a:0.116, cd_min:0.0052, stall:13, cd_k:0.014, label: "NACA 64-412 (laminar)" },
+};
+const PROFILE_ORDER = ["0012","2412","4412","6412","4415","2415","0015","23012","63-412","64-412"];
+
+// Score weights — ported from Pro tool.  Factors without available inputs are omitted.
+const SCORE_WEIGHTS = {
+  entry_cross_base: 49.5,  entry_cross_wt: 2.5,
+  entry_nose_base:  42,    entry_nose_wt:  0.5,
+  entry_frontRC_base: 6,   entry_frontRC_wt: 0.6,
+  entry_rhSplitF_wt:  0.4,
+  entry_noseAero_wt:  0.4, entry_topAero_wt: -0.1,
+  entry_rake_wt:      0.5,
+
+  apex_cross_base: 48,     apex_cross_wt: 2,
+  apex_left_base:  50,     apex_left_wt:  0.5,
+  apex_rollDist_base: 0.48,apex_rollDist_wt: 6.5,
+  apex_rearRC_base: 11,    apex_rearRC_wt: -2,
+  apex_topAero_wt: -0.15,  apex_noseAero_wt: 0.3,
+  apex_banking_wt: 0,
+
+  exit_rear_base: 58,      exit_rear_wt: 0.5,
+  exit_cross_base: 47.5,   exit_cross_wt: 2,
+  exit_rearRC_base: 11,    exit_rearRC_wt: -0.5,
+  exit_rhSplitR_wt: -0.7,
+  exit_topAero_wt: 0.3,
+};
+
+const STORAGE_KEY = 'sprintCarSimLite_setups';
+
+// ── UI helpers ───────────────────────────────────────────────────────────
+function val(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function setVal(id, v) { document.getElementById(id).value = v; }
+function $(id) { return document.getElementById(id); }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function fmt(v, d) { return (+v).toFixed(d !== undefined ? d : 1); }
+
+function toggleSec(id) {
+  $(id).classList.toggle('closed');
+}
+
+let wingsOn = true;
+function setWing(v) {
+  wingsOn = (v === 'on');
+  document.querySelectorAll('#wingToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === v);
+  });
+  $('wingInputs').style.opacity = wingsOn ? '1' : '0.35';
+  $('wingInputs').style.pointerEvents = wingsOn ? 'auto' : 'none';
+  update();
+}
+
+const segState = { trackSize: 'quarter', line: 'low', bank: 'mid' };
+function setSeg(key, val) {
+  segState[key] = val;
+  const segEl = $(key + 'Seg');
+  segEl.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === val);
+  });
+  update();
+}
+
+// ── Spring mode (per-axle Coil / Torsion) ────────────────────────────────
+// Micro sprint typical geometry — bar length & arm length hardcoded.
+const TORSION_GEOM = {
+  front: { barLength_in: 32, armLength_in: 12 },
+  rear:  { barLength_in: 30, armLength_in: 14 },
+};
+const STEEL_G_PSI = 11.5e6;
+
+const COIL_DEFAULTS = { kLF: 250, kRF: 280, kLR: 250, kRR: 275 };
+const TORSION_DEFAULTS = { kLF: 0.875, kRF: 0.900, kLR: 0.875, kRR: 0.900 };
+
+const springMode = { front: 'coil', rear: 'coil' };
+
+function torsionWheelRate(diameter_in, axle) {
+  if (diameter_in <= 0) return 0;
+  const g = TORSION_GEOM[axle];
+  const J = Math.PI * Math.pow(diameter_in, 4) / 32;        // in⁴
+  const k_bar = STEEL_G_PSI * J / g.barLength_in;            // lb·in/rad
+  return k_bar / (g.armLength_in * g.armLength_in);          // lb/in at wheel
+}
+
+/** Effective wheel rate (lb/in) for a given corner, respecting current mode. */
+function wheelRate(cornerId) {
+  const axle = (cornerId === 'kLF' || cornerId === 'kRF') ? 'front' : 'rear';
+  const v = val(cornerId);
+  return springMode[axle] === 'torsion' ? torsionWheelRate(v, axle) : v;
+}
+
+function setSpringMode(axle, mode) {
+  if (springMode[axle] === mode) return;
+  springMode[axle] = mode;
+  const ids = axle === 'front' ? ['kLF','kRF'] : ['kLR','kRR'];
+  const defaults = mode === 'coil' ? COIL_DEFAULTS : TORSION_DEFAULTS;
+  ids.forEach(id => {
+    $(id).value = defaults[id];
+    $(id).step = mode === 'coil' ? 5 : 0.025;
+    $('unit-' + id).textContent = mode === 'coil' ? 'lb/in' : 'in';
+  });
+  const seg = $('spring' + axle.charAt(0).toUpperCase() + axle.slice(1) + 'Seg');
+  seg.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === mode);
+  });
+  update();
+}
+
+// ── NACA profile visualization (4-digit algorithm) ───────────────────────
+function nacaPoints(m_pct, p_tenths, t_pct, N = 60) {
+  const m = m_pct / 100;
+  const p = p_tenths / 10;
+  const t = t_pct / 100;
+  const upper = [], lower = [];
+  for (let i = 0; i <= N; i++) {
+    const beta = Math.PI * i / N;
+    const x = 0.5 * (1 - Math.cos(beta));
+    const yt = 5 * t * (
+      0.2969 * Math.sqrt(x)
+      - 0.1260 * x
+      - 0.3516 * x * x
+      + 0.2843 * x * x * x
+      - 0.1015 * x * x * x * x
+    );
+    let yc = 0, dyc = 0;
+    if (p > 0 && m > 0) {
+      if (x < p) {
+        yc = (m / (p * p)) * (2 * p * x - x * x);
+        dyc = (2 * m / (p * p)) * (p - x);
+      } else {
+        yc = (m / ((1 - p) * (1 - p))) * (1 - 2 * p + 2 * p * x - x * x);
+        dyc = (2 * m / ((1 - p) * (1 - p))) * (p - x);
+      }
+    }
+    const theta = Math.atan(dyc);
+    upper.push([x - yt * Math.sin(theta), yc + yt * Math.cos(theta)]);
+    lower.push([x + yt * Math.sin(theta), yc - yt * Math.cos(theta)]);
+  }
+  return { upper, lower };
+}
+
+function nacaSVG(profileKey, width = 128, height = 36) {
+  const p = PROFILES[profileKey];
+  if (!p) return '';
+  const { upper, lower } = nacaPoints(p.m, p.p, p.t);
+  const allPts = [...upper, ...lower];
+  const xs = allPts.map(pt => pt[0]);
+  const ys = allPts.map(pt => pt[1]);
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  const yMin = Math.min(...ys), yMax = Math.max(...ys);
+
+  const padX = 4, padY = 3;
+  const scaleX = (width - 2 * padX) / (xMax - xMin);
+  // Vertical exaggeration so thin profiles are visible, clamped to fit.
+  let scaleY = scaleX * 1.8;
+  const yRange = yMax - yMin;
+  if (yRange * scaleY > height - 2 * padY) {
+    scaleY = (height - 2 * padY) / yRange;
+  }
+  const offsetX = padX - xMin * scaleX;
+  // Y sign flipped: sprint car wings are installed inverted (camber faces DOWN for downforce).
+  // offsetY is derived for the flipped formula so the polygon stays centered in the viewBox.
+  const offsetY = (height - (yMax + yMin) * scaleY) / 2;
+
+  const fmtPt = ([x, y]) => `${(x * scaleX + offsetX).toFixed(2)},${(offsetY + y * scaleY).toFixed(2)}`;
+  const poly = [...upper.map(fmtPt), ...[...lower].reverse().map(fmtPt)].join(' ');
+  const chordY = offsetY;
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <line x1="${padX}" y1="${chordY}" x2="${width - padX}" y2="${chordY}" stroke="#3a3a42" stroke-width="0.5" stroke-dasharray="2,2"/>
+    <polygon points="${poly}" fill="#e8ff47" fill-opacity="0.18" stroke="#e8ff47" stroke-width="1" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ── Populate NACA dropdowns ──────────────────────────────────────────────
+function populateProfiles() {
+  const topSel = $('topProfile');
+  const noseSel = $('noseProfile');
+  PROFILE_ORDER.forEach(k => {
+    const o1 = document.createElement('option');
+    o1.value = k; o1.textContent = PROFILES[k].label;
+    topSel.appendChild(o1);
+    const o2 = document.createElement('option');
+    o2.value = k; o2.textContent = PROFILES[k].label;
+    noseSel.appendChild(o2);
+  });
+  topSel.value = '6412';
+  noseSel.value = '4412';
+}
+
+// ── Physics ──────────────────────────────────────────────────────────────
+
+/**
+ * Compute downforce and drag for a wing.  Matches Pro tool physics (Prandtl
+ * AR correction, Reynolds stall correction) but without Gurney flaps.
+ */
+function calcAero(profileKey, aoa_deg, area_sqft, chord_in, speed_mph) {
+  const p = PROFILES[profileKey];
+  if (!p || area_sqft <= 0 || chord_in <= 0) {
+    return { cl: 0, cd: 0, downforce: 0, dragForce: 0, AR: 0, Re: 0 };
+  }
+  const chord_ft = chord_in / 12;
+  const span_ft = area_sqft / chord_ft;
+  const AR = (span_ft * span_ft) / area_sqft;
+
+  // Prandtl finite-wing lift slope correction
+  const cl_a_rad = p.cl_a * (180 / Math.PI);
+  const cl_a_3d_rad = cl_a_rad / (1 + (cl_a_rad / (Math.PI * WING_E * AR)));
+  const cl_a_3d = cl_a_3d_rad / (180 / Math.PI);
+
+  let cl = p.cl0 + cl_a_3d * aoa_deg;
+
+  const v_fps = speed_mph * 1.46667;
+  const Re = AIR_RHO * Math.abs(v_fps) * chord_ft / AIR_MU;
+  const Re_ref = 500000;
+  const re_stall_corr = Re >= Re_ref ? 0 : -1.5 * Math.log2(Re_ref / Math.max(Re, 50000));
+  const stall_eff = p.stall + re_stall_corr;
+
+  if (aoa_deg > stall_eff) {
+    const over = aoa_deg - stall_eff;
+    cl = cl * Math.exp(-0.08 * over * over);
+  }
+
+  const cd_induced = (cl * cl) / (Math.PI * WING_E * AR);
+  const re_drag_factor = Re > 0 ? Math.pow(Re_ref / Math.max(Re, 50000), 0.2) : 1;
+  const cd_min_eff = p.cd_min * Math.min(re_drag_factor, 2.5);
+  const cd_profile = cd_min_eff + p.cd_k * (cl - p.cl0) * (cl - p.cl0);
+  const cd = cd_profile + cd_induced;
+
+  const q = 0.5 * AIR_RHO * v_fps * v_fps;  // lb/ft² (slug·ft/s² / ft² = lb/ft²)
+  const downforce = cl * q * area_sqft;
+  const dragForce = cd * q * area_sqft;
+
+  return { cl, cd, downforce, dragForce, AR, Re };
+}
+
+/**
+ * Compute corner radii for each phase given track size and line choice.
+ * Geometry: oval is 40% straight / 60% corners.  Each corner is a semicircle.
+ * Line is placed 4 ft off the inside wall (low) or outside wall (high).
+ */
+function computeRadii(trackSize, line) {
+  const ts = TRACK_SIZES[trackSize];
+  const cornerLen_ft = 0.6 * ts.length_ft;              // total corner arc length
+  const r_inside = cornerLen_ft / (2 * Math.PI);         // inside wall radius
+  const offset = 4;
+  const r_base = line === 'low'
+    ? r_inside + offset
+    : r_inside + ts.width_ft - offset;
+  return {
+    entry: r_base * PHASE_RADIUS_MULT.entry,
+    apex:  r_base * PHASE_RADIUS_MULT.apex,
+    exit:  r_base * PHASE_RADIUS_MULT.exit,
+    inside: r_inside,
+    base: r_base,
+  };
+}
+
+/**
+ * Required lateral G (vehicle frame) for given speed, radius, bank angle.
+ * Positive banking reduces required tire lateral load.
+ */
+function lateralG(speed_mph, radius_ft, bank_deg) {
+  if (radius_ft <= 0) return 0;
+  const v_fps = speed_mph * 1.46667;
+  const a_raw = v_fps * v_fps / (radius_ft * G_FTS2);   // G's unbanked
+  const bankRad = bank_deg * Math.PI / 180;
+  // Same formulation as Pro tool: effective lateral G on the tires
+  return Math.max(0, a_raw * Math.cos(bankRad) - Math.sin(bankRad));
+}
+
+/**
+ * Build the data bundle everything else reads from.
+ */
+function readData() {
+  const wLF = val('wLF'), wRF = val('wRF'), wLR = val('wLR'), wRR = val('wRR');
+  const driver = val('driverWt');
+  const totalWt = wLF + wRF + wLR + wRR;
+  const front = wLF + wRF, rear = wLR + wRR;
+  const left = wLF + wLR, right = wRF + wRR;
+  const cross = wRF + wLR;
+  const pct = (a, b) => b > 0 ? (a / b) * 100 : 0;
+
+  const rhLF = val('rhLF'), rhRF = val('rhRF'), rhLR = val('rhLR'), rhRR = val('rhRR');
+  // Effective wheel rates — resolves coil lb/in or torsion bar diameter transparently
+  const kLF = wheelRate('kLF'), kRF = wheelRate('kRF');
+  const kLR = wheelRate('kLR'), kRR = wheelRate('kRR');
+  const trackF = val('trackF'), trackR = val('trackR');
+
+  // Roll stiffness (relative — only the ratio matters for scoring)
+  const rsFront = (kLF + kRF) * trackF * trackF;
+  const rsRear  = (kLR + kRR) * trackR * trackR;
+  const rollStiffDist = (rsFront + rsRear) > 0 ? rsFront / (rsFront + rsRear) : 0.5;
+
+  // Rake: front vs rear ride height (positive rake = rear higher than front, "nose-down")
+  const frontRH = (rhLF + rhRF) / 2;
+  const rearRH  = (rhLR + rhRR) / 2;
+  const rake = rearRH - frontRH;
+
+  // Wing downforce at each phase speed
+  const spdE = val('spdEntry'), spdA = val('spdApex'), spdX = val('spdExit');
+  const tp = $('topProfile').value;
+  const np = $('noseProfile').value;
+  const tAoA = val('topAoA'), tArea = val('topArea');
+  const nAoA = val('noseAoA'), nArea = val('noseArea');
+
+  const topAero = wingsOn
+    ? { entry: calcAero(tp, tAoA, tArea, TOP_CHORD_IN, spdE),
+        apex:  calcAero(tp, tAoA, tArea, TOP_CHORD_IN, spdA),
+        exit:  calcAero(tp, tAoA, tArea, TOP_CHORD_IN, spdX) }
+    : { entry:{downforce:0,dragForce:0}, apex:{downforce:0,dragForce:0}, exit:{downforce:0,dragForce:0} };
+  const noseAero = wingsOn
+    ? { entry: calcAero(np, nAoA, nArea, NOSE_CHORD_IN, spdE),
+        apex:  calcAero(np, nAoA, nArea, NOSE_CHORD_IN, spdA),
+        exit:  calcAero(np, nAoA, nArea, NOSE_CHORD_IN, spdX) }
+    : { entry:{downforce:0,dragForce:0}, apex:{downforce:0,dragForce:0}, exit:{downforce:0,dragForce:0} };
+
+  // Track & radii & bank & lateral G
+  const radii = computeRadii(segState.trackSize, segState.line);
+  const bank = BANK_ANGLES[segState.bank];
+  const gEntry = lateralG(spdE, radii.entry, bank.entry);
+  const gApex  = lateralG(spdA, radii.apex,  bank.apex);
+  const gExit  = lateralG(spdX, radii.exit,  bank.exit);
+
+  return {
+    wLF, wRF, wLR, wRR, totalWt,
+    front, rear, left, right, cross,
+    nosePct:  pct(front, totalWt),
+    rearPct:  pct(rear, totalWt),
+    leftPct:  pct(left, totalWt),
+    rightPct: pct(right, totalWt),
+    crossPct: pct(cross, totalWt),
+    driver, trackF, trackR,
+    wheelbase: val('wheelbase'),
+    cgH: CG_H, frontRC: FRONT_RC, rearRC: REAR_RC,
+    rhLF, rhRF, rhLR, rhRR,
+    frontRH, rearRH, rake,
+    rhSplitF: rhLF - rhRF,
+    rhSplitR: rhLR - rhRR,
+    kLF, kRF, kLR, kRR,
+    rsFront, rsRear, rollStiffDist,
+    topAero, noseAero,
+    spdE, spdA, spdX,
+    radii, bank,
+    gEntry, gApex, gExit,
+  };
+}
+
+/**
+ * Dynamic wheel loads for a given phase.
+ * Simplified vs. Pro tool: no roll couple/elastic/geometric split (we don't
+ * have shock or CG-axis-offset inputs).  Lateral transfer uses CG height and
+ * average track width.  Aero downforce distributed by weight % front/rear.
+ */
+function wheelLoads(d, phase) {
+  const latG = phase === 'entry' ? d.gEntry : phase === 'apex' ? d.gApex : d.gExit;
+  const topDF  = (phase === 'entry' ? d.topAero.entry : phase === 'apex' ? d.topAero.apex : d.topAero.exit).downforce || 0;
+  const noseDF = (phase === 'entry' ? d.noseAero.entry : phase === 'apex' ? d.noseAero.apex : d.noseAero.exit).downforce || 0;
+
+  const trackAvg = (d.trackF + d.trackR) / 2;
+  const lwtTotal = trackAvg > 0 ? (d.totalWt * latG * d.cgH) / trackAvg : 0;
+
+  // Front/rear split by roll stiffness distribution
+  const lwtFront = lwtTotal * d.rollStiffDist;
+  const lwtRear  = lwtTotal * (1 - d.rollStiffDist);
+
+  // Aero: top wing splits front/rear by weight %; nose wing goes 100% to front
+  const aeroFront = topDF * (d.nosePct / 100) + noseDF;
+  const aeroRear  = topDF * (d.rearPct / 100);
+
+  // Convention: left turn (outside tires on right).  Turning left loads R, unloads L.
+  const lf = Math.max(10, d.wLF - lwtFront + aeroFront / 2);
+  const rf = Math.max(10, d.wRF + lwtFront + aeroFront / 2);
+  const lr = Math.max(10, d.wLR - lwtRear  + aeroRear  / 2);
+  const rr = Math.max(10, d.wRR + lwtRear  + aeroRear  / 2);
+
+  return { lf, rf, lr, rr, latG, aeroFront, aeroRear };
+}
+
+// ── Scoring functions (ported from Pro tool, reduced factor set) ────────
+
+function pushF(factors, name, valText, score, threshold) {
+  const dir = score > threshold ? 'tight' : score < -threshold ? 'free' : 'neutral';
+  factors.push({ name, val: valText, dir, score });
+}
+
+function scoreEntry(d) {
+  const W = SCORE_WEIGHTS;
+  const factors = [];
+  let s = 0;
+
+  const crossDev = d.crossPct - W.entry_cross_base;
+  const crossS = crossDev * W.entry_cross_wt;
+  s += crossS; pushF(factors, 'Cross Weight', fmt(d.crossPct) + '%', crossS, 0.5);
+
+  const noseDev = d.nosePct - W.entry_nose_base;
+  const noseS = noseDev * W.entry_nose_wt;
+  s += noseS; pushF(factors, 'Nose Weight', fmt(d.nosePct) + '%', noseS, 0.5);
+
+  const frontRCDev = d.frontRC - W.entry_frontRC_base;
+  const frontRCS = frontRCDev * W.entry_frontRC_wt;
+  s += frontRCS; /* hardcoded, omit from UI */
+
+  const rhSplitFS = d.rhSplitF * W.entry_rhSplitF_wt;
+  s += rhSplitFS;
+  if (Math.abs(d.rhSplitF) > 0.25) {
+    pushF(factors, 'Front RH Split', fmt(d.rhSplitF, 2) + '" LF-RF', rhSplitFS, 0.2);
+  }
+
+  const rakeS = d.rake * W.entry_rake_wt;
+  s += rakeS;
+  if (Math.abs(d.rake) > 0.5) {
+    pushF(factors, 'Rake', fmt(d.rake, 2) + '" rear high', rakeS, 0.3);
+  }
+
+  const noseDFentry = (d.noseAero.entry.downforce || 0);
+  const topDFentry  = (d.topAero.entry.downforce  || 0);
+  const noseAeroS = noseDFentry * W.entry_noseAero_wt / 10;
+  const topAeroS  = topDFentry  * W.entry_topAero_wt  / 10;
+  s += noseAeroS + topAeroS;
+  if (noseDFentry > 5) {
+    pushF(factors, 'Nose Aero', fmt(noseDFentry) + ' lbs df', noseAeroS, 0.2);
+  }
+  if (topDFentry > 10) {
+    pushF(factors, 'Top Aero', fmt(topDFentry) + ' lbs df', topAeroS, 0.3);
+  }
+
+  return { score: clamp(s, -10, 10), factors };
+}
+
+function scoreApex(d) {
+  const W = SCORE_WEIGHTS;
+  const factors = [];
+  let s = 0;
+
+  const crossDev = d.crossPct - W.apex_cross_base;
+  const crossS = crossDev * W.apex_cross_wt;
+  s += crossS; pushF(factors, 'Cross Weight', fmt(d.crossPct) + '%', crossS, 0.5);
+
+  const leftDev = d.leftPct - W.apex_left_base;
+  const leftS = leftDev * W.apex_left_wt;
+  s += leftS;
+  if (Math.abs(leftDev) > 1) {
+    pushF(factors, 'Left Side', fmt(d.leftPct) + '%', leftS, 0.5);
+  }
+
+  const rollDev = d.rollStiffDist - W.apex_rollDist_base;
+  const rollS = rollDev * W.apex_rollDist_wt;
+  s += rollS;
+  pushF(factors, 'Roll Stiff Dist', fmt(d.rollStiffDist * 100) + '% F', rollS, 0.15);
+
+  const rearRCDev = d.rearRC - W.apex_rearRC_base;
+  const rearRCS = rearRCDev * W.apex_rearRC_wt;
+  s += rearRCS; /* hardcoded */
+
+  const topDFapex  = (d.topAero.apex.downforce  || 0);
+  const noseDFapex = (d.noseAero.apex.downforce || 0);
+  const topAeroS = topDFapex * W.apex_topAero_wt / 10;
+  const noseAeroS = noseDFapex * W.apex_noseAero_wt / 10;
+  s += topAeroS + noseAeroS;
+  if (topDFapex > 10 || noseDFapex > 5) {
+    pushF(factors, 'Aero Balance', fmt(topDFapex + noseDFapex) + ' lbs df', topAeroS + noseAeroS, 0.3);
+  }
+
+  return { score: clamp(s, -10, 10), factors };
+}
+
+function scoreExit(d) {
+  const W = SCORE_WEIGHTS;
+  const factors = [];
+  let s = 0;
+
+  const rearDev = d.rearPct - W.exit_rear_base;
+  const rearS = rearDev * W.exit_rear_wt;
+  s += rearS; pushF(factors, 'Rear Weight', fmt(d.rearPct) + '%', rearS, 0.5);
+
+  const crossDev = d.crossPct - W.exit_cross_base;
+  const crossS = crossDev * W.exit_cross_wt;
+  s += crossS; pushF(factors, 'Cross Weight', fmt(d.crossPct) + '%', crossS, 0.5);
+
+  const rearRCDev = d.rearRC - W.exit_rearRC_base;
+  const rearRCS = rearRCDev * W.exit_rearRC_wt;
+  s += rearRCS; /* hardcoded */
+
+  const rhSplitRS = d.rhSplitR * W.exit_rhSplitR_wt;
+  s += rhSplitRS;
+  if (Math.abs(d.rhSplitR) > 0.25) {
+    pushF(factors, 'Rear RH Split', fmt(d.rhSplitR, 2) + '" LR-RR', rhSplitRS, 0.2);
+  }
+
+  const topDFexit = (d.topAero.exit.downforce || 0);
+  const topAeroS = topDFexit * W.exit_topAero_wt / 10;
+  s += topAeroS;
+  if (topDFexit > 10) {
+    pushF(factors, 'Top Aero', fmt(topDFexit) + ' lbs df', topAeroS, 0.3);
+  }
+
+  return { score: clamp(s, -10, 10), factors };
+}
+
+// ── Rendering ────────────────────────────────────────────────────────────
+
+function classifyScore(score) {
+  const abs = Math.abs(score);
+  if (abs < 2)       return { verdict: 'BALANCED', sev: '', klass: 'balanced' };
+  const dir = score > 0 ? 'TIGHT' : 'LOOSE';
+  if (abs < 4)       return { verdict: dir, sev: 'Slightly',   klass: 'slight' };
+  if (abs < 7)       return { verdict: dir, sev: 'Moderately', klass: 'moderate' };
+  return               { verdict: dir, sev: 'Very',         klass: 'severe' };
+}
+
+function renderPhase(phase, score, factors, loads) {
+  const c = classifyScore(score);
+  const card = $('card-' + phase);
+  card.classList.remove('balanced','slight','moderate','severe');
+  card.classList.add(c.klass);
+
+  const v = $(phase + '-verdict');
+  v.textContent = c.verdict;
+  v.className = 'phase-verdict ' + c.klass;
+
+  const sev = $(phase + '-severity');
+  sev.textContent = c.sev || '\u00A0';
+
+  // Wheel loads
+  const lg = $(phase + '-loads');
+  lg.innerHTML = `
+    <div class="load-cell lf"><span class="ld-label">LF</span><span class="ld-val">${Math.round(loads.lf)}</span></div>
+    <div class="load-cell rf"><span class="ld-label">RF</span><span class="ld-val">${Math.round(loads.rf)}</span></div>
+    <div class="load-cell lr"><span class="ld-label">LR</span><span class="ld-val">${Math.round(loads.lr)}</span></div>
+    <div class="load-cell rr"><span class="ld-label">RR</span><span class="ld-val">${Math.round(loads.rr)}</span></div>
+  `;
+
+  // Factors — show top contributors only, sorted by absolute score
+  const sorted = factors.slice().sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
+  const top = sorted.slice(0, 4);
+  const fl = $(phase + '-factors');
+  if (top.length === 0) {
+    fl.innerHTML = '';
+  } else {
+    fl.innerHTML = `<div class="factor-list-hdr">Top Contributors</div>` + top.map(f => `
+      <div class="factor">
+        <span><span class="factor-name">${f.name}</span><span class="factor-val">${f.val}</span></span>
+        <span class="factor-dir ${f.dir}">${f.dir === 'neutral' ? '·' : f.dir.toUpperCase()}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function renderChips(d) {
+  $('chassis-chips').innerHTML = `
+    <div class="chip"><span class="chip-label">Total</span><span class="chip-val">${Math.round(d.totalWt)} lbs</span></div>
+    <div class="chip"><span class="chip-label">Front</span><span class="chip-val">${fmt(d.nosePct)}%</span></div>
+    <div class="chip"><span class="chip-label">Left</span><span class="chip-val">${fmt(d.leftPct)}%</span></div>
+    <div class="chip"><span class="chip-label">Cross</span><span class="chip-val">${fmt(d.crossPct)}%</span></div>
+    <div class="chip"><span class="chip-label">Roll Dist</span><span class="chip-val">${fmt(d.rollStiffDist * 100)}% F</span></div>
+    <div class="chip"><span class="chip-label">Rake</span><span class="chip-val">${fmt(d.rake, 2)}"</span></div>
+  `;
+  $('track-chips').innerHTML = `
+    <div class="chip"><span class="chip-label">Entry R</span><span class="chip-val">${Math.round(d.radii.entry)} ft</span></div>
+    <div class="chip"><span class="chip-label">Apex R</span><span class="chip-val">${Math.round(d.radii.apex)} ft</span></div>
+    <div class="chip"><span class="chip-label">Exit R</span><span class="chip-val">${Math.round(d.radii.exit)} ft</span></div>
+    <div class="chip"><span class="chip-label">Entry G</span><span class="chip-val">${fmt(d.gEntry, 2)}</span></div>
+    <div class="chip"><span class="chip-label">Apex G</span><span class="chip-val">${fmt(d.gApex, 2)}</span></div>
+    <div class="chip"><span class="chip-label">Exit G</span><span class="chip-val">${fmt(d.gExit, 2)}</span></div>
+  `;
+}
+
+function renderSummaries(d) {
+  $('chassis-summary').textContent =
+    `${Math.round(d.totalWt)} lbs · ${fmt(d.nosePct)}% F · ${fmt(d.crossPct)}% X`;
+  const tp = $('topProfile').options[$('topProfile').selectedIndex]?.text || '';
+  $('wing-summary').textContent = wingsOn ? `${tp.split('(')[0].trim()} @ ${val('topAoA')}°` : 'Wings off';
+  $('track-summary').textContent =
+    `${TRACK_SIZES[segState.trackSize].label} · ${segState.line} line · ${BANK_ANGLES[segState.bank].label.split(' ')[0]} bank`;
+  $('speeds-summary').textContent = `${val('spdEntry')} / ${val('spdApex')} / ${val('spdExit')} mph`;
+  $('entry-speed').textContent = `${val('spdEntry')} mph`;
+  $('apex-speed').textContent  = `${val('spdApex')} mph`;
+  $('exit-speed').textContent  = `${val('spdExit')} mph`;
+}
+
+function renderWingViz() {
+  $('topProfileViz').innerHTML  = nacaSVG($('topProfile').value);
+  $('noseProfileViz').innerHTML = nacaSVG($('noseProfile').value);
+}
+
+function renderSpringComputed() {
+  // When in torsion mode, show the computed wheel rate so users see the physical meaning.
+  const front = $('computed-front');
+  const rear  = $('computed-rear');
+  if (springMode.front === 'torsion') {
+    const lf = torsionWheelRate(val('kLF'), 'front');
+    const rf = torsionWheelRate(val('kRF'), 'front');
+    front.textContent = `→ ${Math.round(lf)} / ${Math.round(rf)} lb/in`;
+  } else {
+    front.textContent = '';
+  }
+  if (springMode.rear === 'torsion') {
+    const lr = torsionWheelRate(val('kLR'), 'rear');
+    const rr = torsionWheelRate(val('kRR'), 'rear');
+    rear.textContent = `→ ${Math.round(lr)} / ${Math.round(rr)} lb/in`;
+  } else {
+    rear.textContent = '';
+  }
+}
+
+function update() {
+  const d = readData();
+
+  const entryLoads = wheelLoads(d, 'entry');
+  const apexLoads  = wheelLoads(d, 'apex');
+  const exitLoads  = wheelLoads(d, 'exit');
+
+  const eS = scoreEntry(d);
+  const aS = scoreApex(d);
+  const xS = scoreExit(d);
+
+  renderPhase('entry', eS.score, eS.factors, entryLoads);
+  renderPhase('apex',  aS.score, aS.factors, apexLoads);
+  renderPhase('exit',  xS.score, xS.factors, exitLoads);
+
+  renderChips(d);
+  renderSummaries(d);
+  renderWingViz();
+  renderSpringComputed();
+
+  $('analysis-summary').textContent =
+    `${classifyScore(eS.score).verdict} / ${classifyScore(aS.score).verdict} / ${classifyScore(xS.score).verdict}`;
+}
+
+// ── Save / Load ──────────────────────────────────────────────────────────
+
+const SAVEABLE_IDS = [
+  'wLF','wRF','wLR','wRR','driverWt','wheelbase','trackF','trackR',
+  'rhLF','rhRF','rhLR','rhRR','kLF','kRF','kLR','kRR',
+  'topProfile','topAoA','topArea','noseProfile','noseAoA','noseArea',
+  'spdEntry','spdApex','spdExit',
+];
+
+function captureSetup() {
+  const s = {};
+  SAVEABLE_IDS.forEach(id => { s[id] = $(id).value; });
+  s.wingsOn = wingsOn;
+  s.trackSize = segState.trackSize;
+  s.line = segState.line;
+  s.bank = segState.bank;
+  s.springFront = springMode.front;
+  s.springRear  = springMode.rear;
+  return s;
+}
+
+function applySetup(s) {
+  // Spring mode must apply BEFORE values so the defaults-swap doesn't clobber saved rates.
+  if (s.springFront) setSpringMode('front', s.springFront);
+  if (s.springRear)  setSpringMode('rear',  s.springRear);
+  SAVEABLE_IDS.forEach(id => {
+    if (s[id] !== undefined) $(id).value = s[id];
+  });
+  if (s.wingsOn !== undefined) setWing(s.wingsOn ? 'on' : 'off');
+  if (s.trackSize) setSeg('trackSize', s.trackSize);
+  if (s.line)      setSeg('line', s.line);
+  if (s.bank)      setSeg('bank', s.bank);
+}
+
+function loadStorage() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function writeStorage(o) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(o));
+}
+
+function refreshSetupList() {
+  const data = loadStorage();
+  const sel = $('setupList');
+  sel.innerHTML = '<option value="">— Load saved setup —</option>';
+  Object.keys(data).sort().forEach(name => {
+    const o = document.createElement('option');
+    o.value = name; o.textContent = name;
+    sel.appendChild(o);
+  });
+}
+
+function saveSetup() {
+  const name = $('setupName').value.trim();
+  if (!name) { toast('Enter a name first'); return; }
+  const data = loadStorage();
+  data[name] = captureSetup();
+  writeStorage(data);
+  refreshSetupList();
+  toast(`Saved "${name}"`);
+}
+
+function onSelectSetup() {
+  const name = $('setupList').value;
+  if (!name) return;
+  const data = loadStorage();
+  if (!data[name]) return;
+  applySetup(data[name]);
+  $('setupName').value = name;
+  toast(`Loaded "${name}"`);
+  update();
+}
+
+function deleteSetup() {
+  const name = $('setupList').value;
+  if (!name) { toast('Select a setup to delete'); return; }
+  if (!confirm(`Delete setup "${name}"?`)) return;
+  const data = loadStorage();
+  delete data[name];
+  writeStorage(data);
+  refreshSetupList();
+  $('setupList').value = '';
+  toast(`Deleted "${name}"`);
+}
+
+const DEFAULTS = {
+  wLF:190, wRF:175, wLR:240, wRR:220, driverWt:160, wheelbase:65,
+  trackF:54, trackR:56,
+  rhLF:4.5, rhRF:4.0, rhLR:5.5, rhRR:5.0,
+  kLF:250, kRF:280, kLR:250, kRR:275,
+  topProfile:'6412', topAoA:10, topArea:14,
+  noseProfile:'4412', noseAoA:6, noseArea:4,
+  spdEntry:45, spdApex:32, spdExit:50,
+};
+
+function resetDefaults() {
+  if (!confirm('Reset all values to defaults?')) return;
+  setSpringMode('front', 'coil');
+  setSpringMode('rear',  'coil');
+  Object.entries(DEFAULTS).forEach(([k, v]) => {
+    if ($(k)) $(k).value = v;
+  });
+  setWing('on');
+  setSeg('trackSize', 'quarter');
+  setSeg('line', 'low');
+  setSeg('bank', 'mid');
+  $('setupName').value = '';
+  $('setupList').value = '';
+  toast('Reset to defaults');
+}
+
+// ── Boot ─────────────────────────────────────────────────────────────────
+populateProfiles();
+refreshSetupList();
+update();
+</script>
+</body>
+</html>
