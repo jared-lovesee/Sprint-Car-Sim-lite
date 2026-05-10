@@ -569,6 +569,70 @@ input[type="text"]:focus { border-color: var(--accent); }
 }
 .toast.show { opacity: 1; }
 
+/* Chassis viz panel (top-down car view) */
+.chassis-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.chassis-inputs {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.chassis-viz {
+  width: 250px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  padding: 12px 14px 14px;
+}
+.chassis-viz-hdr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chassis-viz-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border2);
+}
+.chassis-viz-stat {
+  text-align: center;
+}
+.chassis-viz-stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.chassis-viz-stat-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 17px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 2px;
+}
+.chassis-viz svg .tire { transition: fill-opacity 0.2s ease; }
+
+@media (max-width: 1100px) {
+  .chassis-layout { flex-direction: column; }
+  .chassis-viz { width: 100%; max-width: 280px; }
+}
+
 @media (max-width: 900px) {
   .phase-grid { grid-template-columns: 1fr; }
   main { padding: 12px; }
@@ -599,6 +663,8 @@ input[type="text"]:focus { border-color: var(--accent); }
   </div>
   <div class="section-body">
 
+    <div class="chassis-layout">
+     <div class="chassis-inputs">
     <div class="input-row">
       <div style="display: flex; flex-direction: column; gap: 6px;">
         <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Corner Weights (lbs)</div>
@@ -711,16 +777,70 @@ input[type="text"]:focus { border-color: var(--accent); }
         </div>
       </div>
     </div>
+     </div><!-- /chassis-inputs -->
+     <div class="chassis-viz" id="chassis-viz"></div>
+    </div><!-- /chassis-layout -->
 
     <div class="chip-row" id="chassis-chips"></div>
   </div>
 </div>
 
-<!-- ============ 2. WING ============ -->
+<!-- ============ 2. TIRES ============ -->
+<div class="section" id="sec-tires">
+  <div class="section-hdr" onclick="toggleSec('sec-tires')">
+    <div class="section-hdr-left">
+      <span class="section-hdr-num">2</span>
+      <span>Tires</span>
+      <span class="section-summary" id="tire-summary"></span>
+    </div>
+    <span class="collapse-arrow">▼</span>
+  </div>
+  <div class="section-body">
+    <div class="input-row">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;">Air Pressure (PSI)</div>
+        <div class="corner-grid">
+          <div class="corner-card lf">
+            <span class="cc-label">LF</span>
+            <input type="number" id="psiLF" value="8.0" step="0.25" min="4" max="16" oninput="update()">
+          </div>
+          <div class="corner-card rf">
+            <span class="cc-label">RF</span>
+            <input type="number" id="psiRF" value="8.0" step="0.25" min="4" max="16" oninput="update()">
+          </div>
+          <div class="corner-card lr">
+            <span class="cc-label">LR</span>
+            <input type="number" id="psiLR" value="8.0" step="0.25" min="4" max="16" oninput="update()">
+          </div>
+          <div class="corner-card rr">
+            <span class="cc-label">RR</span>
+            <input type="number" id="psiRR" value="8.0" step="0.25" min="4" max="16" oninput="update()">
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-left: 14px;">
+        <div class="input-group">
+          <label>Rear Stagger <span class="unit">in</span></label>
+          <input type="number" id="rearStagger" value="1.5" step="0.25" min="0" max="5" oninput="update()">
+        </div>
+        <div class="input-group">
+          <label>Front Stagger <span class="unit">in</span></label>
+          <input type="number" id="frontStagger" value="0.0" step="0.25" min="0" max="3" oninput="update()">
+        </div>
+        <div style="font-size: 10px; color: var(--muted); line-height: 1.4;">
+          Stagger = right circ − left circ.<br>More rear stagger helps rotation.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. WING ============ -->
 <div class="section" id="sec-wing">
   <div class="section-hdr" onclick="toggleSec('sec-wing')">
     <div class="section-hdr-left">
-      <span class="section-hdr-num">2</span>
+      <span class="section-hdr-num">3</span>
       <span>Wing Package</span>
       <span class="section-summary" id="wing-summary"></span>
     </div>
@@ -771,11 +891,11 @@ input[type="text"]:focus { border-color: var(--accent); }
   </div>
 </div>
 
-<!-- ============ 3. TRACK & LINE ============ -->
+<!-- ============ 4. TRACK & LINE ============ -->
 <div class="section" id="sec-track">
   <div class="section-hdr" onclick="toggleSec('sec-track')">
     <div class="section-hdr-left">
-      <span class="section-hdr-num">3</span>
+      <span class="section-hdr-num">4</span>
       <span>Track &amp; Line</span>
       <span class="section-summary" id="track-summary"></span>
     </div>
@@ -815,11 +935,11 @@ input[type="text"]:focus { border-color: var(--accent); }
   </div>
 </div>
 
-<!-- ============ 4. CORNER SPEEDS ============ -->
+<!-- ============ 5. CORNER SPEEDS ============ -->
 <div class="section" id="sec-speeds">
   <div class="section-hdr" onclick="toggleSec('sec-speeds')">
     <div class="section-hdr-left">
-      <span class="section-hdr-num">4</span>
+      <span class="section-hdr-num">5</span>
       <span>Corner Speeds</span>
       <span class="section-summary" id="speeds-summary"></span>
     </div>
@@ -890,7 +1010,7 @@ input[type="text"]:focus { border-color: var(--accent); }
 <div class="section" id="sec-saveload">
   <div class="section-hdr" onclick="toggleSec('sec-saveload')">
     <div class="section-hdr-left">
-      <span class="section-hdr-num">5</span>
+      <span class="section-hdr-num">6</span>
       <span>Save &amp; Load Setups</span>
     </div>
     <span class="collapse-arrow">▼</span>
@@ -957,26 +1077,38 @@ const PROFILES = {
 const PROFILE_ORDER = ["0012","2412","4412","6412","4415","2415","0015","23012","63-412","64-412"];
 
 // Score weights — ported from Pro tool.  Factors without available inputs are omitted.
+// Scoring uses DYNAMIC in-phase cross/nose/left/rear percentages derived from
+// wheelLoads() — same approach as Pro.  Bases are tuned to in-phase values,
+// not static scale-pad readings (which run ~5-7% higher for cross).
 const SCORE_WEIGHTS = {
-  entry_cross_base: 49.5,  entry_cross_wt: 2.5,
+  entry_cross_base: 45,    entry_cross_wt: 0,
   entry_nose_base:  42,    entry_nose_wt:  0.5,
   entry_frontRC_base: 6,   entry_frontRC_wt: 0.6,
   entry_rhSplitF_wt:  0.4,
   entry_noseAero_wt:  0.4, entry_topAero_wt: -0.1,
   entry_rake_wt:      0.5,
+  entry_stagger_base: 3.2, entry_stagger_wt: -0.7,
+  entry_rearPsiSplit_wt: -0.7,
 
-  apex_cross_base: 48,     apex_cross_wt: 2,
-  apex_left_base:  50,     apex_left_wt:  0.5,
+  apex_cross_base: 42,     apex_cross_wt: 2,
+  apex_left_base:  36,     apex_left_wt:  0.5,
   apex_rollDist_base: 0.48,apex_rollDist_wt: 6.5,
   apex_rearRC_base: 11,    apex_rearRC_wt: -2,
   apex_topAero_wt: -0.15,  apex_noseAero_wt: 0.3,
   apex_banking_wt: 0,
+  apex_rearPsiSplit_wt: -0.6,
+  // Yaw offset: at apex the car is yawed 11-15°, generating a natural
+  // loosening moment.  Pro handles this via calcPhaseWeights at reference
+  // yaw; Lite applies a fixed bias to prevent apex from pegging "Very Tight."
+  apex_yaw_offset: -13,
 
-  exit_rear_base: 58,      exit_rear_wt: 0.5,
+  exit_rear_base: 68,      exit_rear_wt: 0.5,
   exit_cross_base: 47.5,   exit_cross_wt: 2,
   exit_rearRC_base: 11,    exit_rearRC_wt: -0.5,
   exit_rhSplitR_wt: -0.7,
   exit_topAero_wt: 0.3,
+  exit_stagger_base: 2.5,  exit_stagger_wt: -0.5,
+  exit_rearPsiSplit_wt: -0.5,
 };
 
 const STORAGE_KEY = 'sprintCarSimLite_setups';
@@ -1021,6 +1153,14 @@ const TORSION_GEOM = {
 };
 const STEEL_G_PSI = 11.5e6;
 
+// ── Tire constants ──────────────────────────────────────────────────────
+// Standard micro sprint tire dimensions (assumed for Lite — Pro lets you enter each)
+const TIRE_WIDTH_FRONT = 6.0;  // inches
+const TIRE_WIDTH_REAR  = 8.0;  // inches
+const TIRE_DIA_FRONT   = 18.0; // inches (~56.5" circ / π)
+const TIRE_DIA_REAR    = 22.0; // inches (~69" circ / π)
+const C_TIRE_BIAS      = 5.5;  // construction factor for bias-ply
+
 const COIL_DEFAULTS = { kLF: 250, kRF: 280, kLR: 250, kRR: 275 };
 const TORSION_DEFAULTS = { kLF: 0.875, kRF: 0.900, kLR: 0.875, kRR: 0.900 };
 
@@ -1057,6 +1197,33 @@ function setSpringMode(axle, mode) {
   });
   update();
 }
+
+// ── Tire physics (simplified from Pro) ──────────────────────────────────
+
+/**
+ * Tire vertical spring rate for bias-ply racing tires.
+ * k_tire ≈ Ct × PSI × sectionWidth × diameter-correction.
+ * Examples: 6" wide at 8 psi → ~264 lb/in; 8" wide at 8 psi → ~352 lb/in.
+ */
+function tireSpringRate(psi, width, dia) {
+  const diaFactor = Math.sqrt(18 / Math.max(dia, 12));
+  return C_TIRE_BIAS * psi * width * diaFactor;
+}
+
+/** Series spring combination: 1/k = 1/k_susp + 1/k_tire */
+function combinedRate(kSusp, kTire) {
+  if (kSusp <= 0 || kTire <= 0) return kSusp > 0 ? kSusp : 0;
+  return (kSusp * kTire) / (kSusp + kTire);
+}
+
+/**
+ * Rear PSI split = psiRR − psiLR.
+ * In a left turn the RR is the loaded outside tire.
+ *   Positive split (RR > LR) → less grip on loaded tire → freer.
+ *   Negative split (LR > RR) → more grip on loaded tire → tighter.
+ * Front pressures barely affect grip balance — they matter only through
+ * tire spring rate (already captured in the series-spring roll stiffness).
+ */
 
 // ── NACA profile visualization (4-digit algorithm) ───────────────────────
 function nacaPoints(m_pct, p_tenths, t_pct, N = 60) {
@@ -1207,9 +1374,13 @@ function computeRadii(trackSize, line) {
   const r_base = line === 'low'
     ? r_inside + offset
     : r_inside + ts.width_ft - offset;
+  // Low line hugs the inside — tighter apex radius (−15%)
+  const apexMult = line === 'low'
+    ? PHASE_RADIUS_MULT.apex * 0.85
+    : PHASE_RADIUS_MULT.apex;
   return {
     entry: r_base * PHASE_RADIUS_MULT.entry,
-    apex:  r_base * PHASE_RADIUS_MULT.apex,
+    apex:  r_base * apexMult,
     exit:  r_base * PHASE_RADIUS_MULT.exit,
     inside: r_inside,
     base: r_base,
@@ -1242,15 +1413,35 @@ function readData() {
   const pct = (a, b) => b > 0 ? (a / b) * 100 : 0;
 
   const rhLF = val('rhLF'), rhRF = val('rhRF'), rhLR = val('rhLR'), rhRR = val('rhRR');
-  // Effective wheel rates — resolves coil lb/in or torsion bar diameter transparently
-  const kLF = wheelRate('kLF'), kRF = wheelRate('kRF');
-  const kLR = wheelRate('kLR'), kRR = wheelRate('kRR');
+
+  // Tire pressures
+  const psiLF = val('psiLF'), psiRF = val('psiRF');
+  const psiLR = val('psiLR'), psiRR = val('psiRR');
+
+  // Tire spring rates (vertical) — depend on pressure & assumed tire dimensions
+  const kTireLF = tireSpringRate(psiLF, TIRE_WIDTH_FRONT, TIRE_DIA_FRONT);
+  const kTireRF = tireSpringRate(psiRF, TIRE_WIDTH_FRONT, TIRE_DIA_FRONT);
+  const kTireLR = tireSpringRate(psiLR, TIRE_WIDTH_REAR,  TIRE_DIA_REAR);
+  const kTireRR = tireSpringRate(psiRR, TIRE_WIDTH_REAR,  TIRE_DIA_REAR);
+
+  // Effective wheel rates = suspension spring in series with tire spring
+  const kLF = combinedRate(wheelRate('kLF'), kTireLF);
+  const kRF = combinedRate(wheelRate('kRF'), kTireRF);
+  const kLR = combinedRate(wheelRate('kLR'), kTireLR);
+  const kRR = combinedRate(wheelRate('kRR'), kTireRR);
   const trackF = val('trackF'), trackR = val('trackR');
 
   // Roll stiffness (relative — only the ratio matters for scoring)
   const rsFront = (kLF + kRF) * trackF * trackF;
   const rsRear  = (kLR + kRR) * trackR * trackR;
   const rollStiffDist = (rsFront + rsRear) > 0 ? rsFront / (rsFront + rsRear) : 0.5;
+
+  // Stagger
+  const rearStagger  = val('rearStagger');
+  const frontStagger = val('frontStagger');
+
+  // Rear PSI split: positive = RR higher → freer (less grip on loaded outside tire)
+  const rearPsiSplit = psiRR - psiLR;
 
   // Rake: front vs rear ride height (positive rake = rear higher than front, "nose-down")
   const frontRH = (rhLF + rhRF) / 2;
@@ -1298,7 +1489,9 @@ function readData() {
     rhSplitF: rhLF - rhRF,
     rhSplitR: rhLR - rhRR,
     kLF, kRF, kLR, kRR,
+    psiLF, psiRF, psiLR, psiRR,
     rsFront, rsRear, rollStiffDist,
+    rearStagger, frontStagger, rearPsiSplit,
     topAero, noseAero,
     spdE, spdA, spdX,
     radii, bank,
@@ -1337,6 +1530,21 @@ function wheelLoads(d, phase) {
   return { lf, rf, lr, rr, latG, aeroFront, aeroRear };
 }
 
+/**
+ * Derive cross/nose/left/rear percentages from dynamic in-phase wheel loads.
+ * Cross = RF + LR  (right-front + left-rear = "cross" for a left-turn oval).
+ */
+function dynPcts(loads) {
+  const total = loads.lf + loads.rf + loads.lr + loads.rr;
+  if (total <= 0) return { crossPct: 0, nosePct: 0, leftPct: 0, rearPct: 0 };
+  return {
+    crossPct: (loads.rf + loads.lr) / total * 100,
+    nosePct:  (loads.lf + loads.rf) / total * 100,
+    leftPct:  (loads.lf + loads.lr) / total * 100,
+    rearPct:  (loads.lr + loads.rr) / total * 100,
+  };
+}
+
 // ── Scoring functions (ported from Pro tool, reduced factor set) ────────
 
 function pushF(factors, name, valText, score, threshold) {
@@ -1344,18 +1552,18 @@ function pushF(factors, name, valText, score, threshold) {
   factors.push({ name, val: valText, dir, score });
 }
 
-function scoreEntry(d) {
+function scoreEntry(d, pw) {
   const W = SCORE_WEIGHTS;
   const factors = [];
   let s = 0;
 
-  const crossDev = d.crossPct - W.entry_cross_base;
+  const crossDev = pw.crossPct - W.entry_cross_base;
   const crossS = crossDev * W.entry_cross_wt;
-  s += crossS; pushF(factors, 'Cross Weight', fmt(d.crossPct) + '%', crossS, 0.5);
+  s += crossS; pushF(factors, 'Cross Weight', fmt(pw.crossPct) + '%', crossS, 0.5);
 
-  const noseDev = d.nosePct - W.entry_nose_base;
+  const noseDev = pw.nosePct - W.entry_nose_base;
   const noseS = noseDev * W.entry_nose_wt;
-  s += noseS; pushF(factors, 'Nose Weight', fmt(d.nosePct) + '%', noseS, 0.5);
+  s += noseS; pushF(factors, 'Nose Weight', fmt(pw.nosePct) + '%', noseS, 0.5);
 
   const frontRCDev = d.frontRC - W.entry_frontRC_base;
   const frontRCS = frontRCDev * W.entry_frontRC_wt;
@@ -1385,23 +1593,36 @@ function scoreEntry(d) {
     pushF(factors, 'Top Aero', fmt(topDFentry) + ' lbs df', topAeroS, 0.3);
   }
 
+  // Stagger: more stagger helps rotation → free; less → tight
+  const staggerDev = d.rearStagger - W.entry_stagger_base;
+  const staggerS = staggerDev * W.entry_stagger_wt;
+  s += staggerS;
+  pushF(factors, 'Rear Stagger', fmt(d.rearStagger, 2) + '"', staggerS, 0.3);
+
+  // Rear PSI split: RR higher → less grip on loaded tire → free
+  const rearPsiS = d.rearPsiSplit * W.entry_rearPsiSplit_wt;
+  s += rearPsiS;
+  if (Math.abs(d.rearPsiSplit) >= 0.25) {
+    pushF(factors, 'Rear PSI Split', fmt(d.rearPsiSplit, 1) + ' psi R−L', rearPsiS, 0.3);
+  }
+
   return { score: clamp(s, -10, 10), factors };
 }
 
-function scoreApex(d) {
+function scoreApex(d, pw) {
   const W = SCORE_WEIGHTS;
   const factors = [];
   let s = 0;
 
-  const crossDev = d.crossPct - W.apex_cross_base;
+  const crossDev = pw.crossPct - W.apex_cross_base;
   const crossS = crossDev * W.apex_cross_wt;
-  s += crossS; pushF(factors, 'Cross Weight', fmt(d.crossPct) + '%', crossS, 0.5);
+  s += crossS; pushF(factors, 'Cross Weight', fmt(pw.crossPct) + '%', crossS, 0.5);
 
-  const leftDev = d.leftPct - W.apex_left_base;
+  const leftDev = pw.leftPct - W.apex_left_base;
   const leftS = leftDev * W.apex_left_wt;
   s += leftS;
   if (Math.abs(leftDev) > 1) {
-    pushF(factors, 'Left Side', fmt(d.leftPct) + '%', leftS, 0.5);
+    pushF(factors, 'Left Side', fmt(pw.leftPct) + '%', leftS, 0.5);
   }
 
   const rollDev = d.rollStiffDist - W.apex_rollDist_base;
@@ -1422,21 +1643,31 @@ function scoreApex(d) {
     pushF(factors, 'Aero Balance', fmt(topDFapex + noseDFapex) + ' lbs df', topAeroS + noseAeroS, 0.3);
   }
 
+  // Rear PSI split: RR higher → less grip on loaded tire → free
+  const rearPsiS = d.rearPsiSplit * W.apex_rearPsiSplit_wt;
+  s += rearPsiS;
+  if (Math.abs(d.rearPsiSplit) >= 0.25) {
+    pushF(factors, 'Rear PSI Split', fmt(d.rearPsiSplit, 1) + ' psi R−L', rearPsiS, 0.3);
+  }
+
+  // Apply yaw offset — the car is fully rotated at center, naturally loosening
+  s += (W.apex_yaw_offset || 0);
+
   return { score: clamp(s, -10, 10), factors };
 }
 
-function scoreExit(d) {
+function scoreExit(d, pw) {
   const W = SCORE_WEIGHTS;
   const factors = [];
   let s = 0;
 
-  const rearDev = d.rearPct - W.exit_rear_base;
+  const rearDev = pw.rearPct - W.exit_rear_base;
   const rearS = rearDev * W.exit_rear_wt;
-  s += rearS; pushF(factors, 'Rear Weight', fmt(d.rearPct) + '%', rearS, 0.5);
+  s += rearS; pushF(factors, 'Rear Weight', fmt(pw.rearPct) + '%', rearS, 0.5);
 
-  const crossDev = d.crossPct - W.exit_cross_base;
+  const crossDev = pw.crossPct - W.exit_cross_base;
   const crossS = crossDev * W.exit_cross_wt;
-  s += crossS; pushF(factors, 'Cross Weight', fmt(d.crossPct) + '%', crossS, 0.5);
+  s += crossS; pushF(factors, 'Cross Weight', fmt(pw.crossPct) + '%', crossS, 0.5);
 
   const rearRCDev = d.rearRC - W.exit_rearRC_base;
   const rearRCS = rearRCDev * W.exit_rearRC_wt;
@@ -1453,6 +1684,19 @@ function scoreExit(d) {
   s += topAeroS;
   if (topDFexit > 10) {
     pushF(factors, 'Top Aero', fmt(topDFexit) + ' lbs df', topAeroS, 0.3);
+  }
+
+  // Stagger: more stagger can over-rotate on exit → free
+  const staggerDev = d.rearStagger - W.exit_stagger_base;
+  const staggerS = staggerDev * W.exit_stagger_wt;
+  s += staggerS;
+  pushF(factors, 'Rear Stagger', fmt(d.rearStagger, 2) + '"', staggerS, 0.3);
+
+  // Rear PSI split: RR higher → less grip on loaded tire → free
+  const rearPsiS = d.rearPsiSplit * W.exit_rearPsiSplit_wt;
+  s += rearPsiS;
+  if (Math.abs(d.rearPsiSplit) >= 0.25) {
+    pushF(factors, 'Rear PSI Split', fmt(d.rearPsiSplit, 1) + ' psi R−L', rearPsiS, 0.3);
   }
 
   return { score: clamp(s, -10, 10), factors };
@@ -1507,6 +1751,169 @@ function renderPhase(phase, score, factors, loads) {
   }
 }
 
+function renderChassisViz(d) {
+  const loads = [d.wLF, d.wRF, d.wLR, d.wRR];
+  const minL = Math.min(...loads);
+  const maxL = Math.max(...loads);
+  const range = Math.max(maxL - minL, 1);
+  // 0.30 (lightest tire) to 1.0 (heaviest tire)
+  const intensity = (v) => 0.30 + 0.70 * ((v - minL) / range);
+
+  // Cross weight diagonal: cross % is (RF + LR) / total.
+  // > 50% means the RF-LR diagonal is heavy ("more cross" — typical for left-turn oval)
+  // < 50% means the LF-RR diagonal is heavy ("less cross")
+  const heavyDiag = d.crossPct >= 50 ? 'cross' : 'anti';
+  const crossDelta = Math.abs(d.crossPct - 50);
+  const crossActive = crossDelta > 0.3;
+
+  // Left side weight: > 50% is left-heavy (typical), 50% is balanced
+  const leftHeavy = d.leftPct > 50;
+
+  // Color cross % to match the existing scoring vibe: yellow accent if elevated, alert red if very high
+  const crossColor =
+    d.crossPct >= 53 ? 'var(--alert)' :
+    d.crossPct >= 51 ? 'var(--warn)' :
+    d.crossPct <= 47 ? 'var(--lf)' :
+    'var(--accent)';
+  const leftColor =
+    d.leftPct >= 60 ? 'var(--accent)' :
+    d.leftPct <= 50 ? 'var(--alert)' :
+    'var(--good)';
+
+  const dim = 'rgba(120,120,135,0.25)';
+  const hot = 'rgba(232,255,71,0.85)';
+  const diagLF_RR = heavyDiag === 'anti' && crossActive ? hot : dim;
+  const diagRF_LR = heavyDiag === 'cross' && crossActive ? hot : dim;
+  const diagLF_RR_w = heavyDiag === 'anti' && crossActive ? 1.6 : 1;
+  const diagRF_LR_w = heavyDiag === 'cross' && crossActive ? 1.6 : 1;
+
+  const svg = `
+    <div class="chassis-viz-hdr">
+      <span>Weight Distribution</span>
+      <span style="color: var(--muted2); font-size: 9px;">▲ FRONT</span>
+    </div>
+    <svg viewBox="0 0 250 340" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;height:auto;display:block;">
+      <!-- Direction arrow above nose -->
+      <path d="M 125 6 L 119 16 L 131 16 Z" fill="#7a7a85"/>
+
+      <!-- Side nerf bars (outboard of the tires — bumper protection) -->
+      <path d="M 40 76 Q 26 80, 24 100 L 24 240 Q 26 268, 40 272"
+            fill="none" stroke="#5a5a64" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M 210 76 Q 224 80, 226 100 L 226 240 Q 224 268, 210 272"
+            fill="none" stroke="#5a5a64" stroke-width="1.2" stroke-linecap="round"/>
+
+      <!-- Body silhouette (sharp nose, wider middle, narrow tail) -->
+      <path d="M 125 22
+               L 109 60
+               L 100 70
+               L 98 110
+               L 98 220
+               L 102 248
+               L 108 282
+               L 142 282
+               L 148 248
+               L 152 220
+               L 152 110
+               L 150 70
+               L 141 60 Z"
+            fill="#0d0d10" stroke="#3a3a44" stroke-width="1.1"/>
+
+      <!-- Front bumper crossbar -->
+      <line x1="109" y1="60" x2="141" y2="60" stroke="#5a5a64" stroke-width="1.2" stroke-linecap="round"/>
+
+      <!-- Roll cage: 2 long side bars + front/rear hoops (top-down) -->
+      <line x1="112" y1="118" x2="112" y2="202" stroke="#6a6a74" stroke-width="1.6"/>
+      <line x1="138" y1="118" x2="138" y2="202" stroke="#6a6a74" stroke-width="1.6"/>
+      <line x1="112" y1="118" x2="138" y2="118" stroke="#6a6a74" stroke-width="1.4"/>
+      <line x1="112" y1="202" x2="138" y2="202" stroke="#6a6a74" stroke-width="1.4"/>
+
+      <!-- Cockpit shading inside cage -->
+      <rect x="113" y="119" width="24" height="82" fill="#15151a" opacity="0.7"/>
+
+      <!-- Driver helmet (front of cockpit) -->
+      <circle cx="125" cy="150" r="9" fill="#1a1a20" stroke="#8a8a95" stroke-width="1"/>
+      <circle cx="125" cy="150" r="5" fill="#3a3a44"/>
+      <line x1="119" y1="149" x2="131" y2="149" stroke="#8a8a95" stroke-width="0.9" stroke-linecap="round"/>
+
+      <!-- Engine block (behind driver, in front of rear axle) -->
+      <rect x="108" y="206" width="34" height="34" rx="1.5" fill="#1a1a20" stroke="#5a5a64" stroke-width="1"/>
+      <line x1="117" y1="210" x2="117" y2="237" stroke="#3a3a44" stroke-width="0.6"/>
+      <line x1="125" y1="210" x2="125" y2="237" stroke="#3a3a44" stroke-width="0.6"/>
+      <line x1="133" y1="210" x2="133" y2="237" stroke="#3a3a44" stroke-width="0.6"/>
+
+      <!-- Exhaust headers (signature curls on left side - 4 primaries into a collector) -->
+      <path d="M 108 211 Q 94 214, 88 222 Q 84 230, 90 236"
+            fill="none" stroke="#b8b8c2" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M 108 220 Q 90 222, 82 230 Q 80 240, 88 244"
+            fill="none" stroke="#b8b8c2" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M 108 230 Q 88 232, 80 240 Q 80 250, 88 252"
+            fill="none" stroke="#b8b8c2" stroke-width="1.6" stroke-linecap="round"/>
+      <!-- Collector pipe heading rearward -->
+      <path d="M 86 250 Q 84 260, 86 274" fill="none" stroke="#b8b8c2" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Quick-change rear end housing -->
+      <circle cx="125" cy="250" r="6" fill="#1a1a20" stroke="#6a6a74" stroke-width="0.9"/>
+      <circle cx="125" cy="250" r="2" fill="#5a5a64"/>
+
+      <!-- Front axle (dashed) -->
+      <line x1="60" y1="90" x2="190" y2="90" stroke="#2a2a32" stroke-width="1" stroke-dasharray="3,2"/>
+      <!-- Rear axle (dashed) -->
+      <line x1="55" y1="250" x2="195" y2="250" stroke="#2a2a32" stroke-width="1" stroke-dasharray="3,2"/>
+
+      <!-- Cross-weight diagonals -->
+      <line x1="51" y1="90"  x2="201" y2="250"
+            stroke="${diagLF_RR}" stroke-width="${diagLF_RR_w}" stroke-dasharray="4,3"/>
+      <line x1="199" y1="90" x2="49"  y2="250"
+            stroke="${diagRF_LR}" stroke-width="${diagRF_LR_w}" stroke-dasharray="4,3"/>
+
+      <!-- Tires (front: smaller; rear: larger) -->
+      <rect class="tire" x="42" y="74" width="18" height="32" rx="3"
+            fill="#4facff" fill-opacity="${intensity(d.wLF).toFixed(2)}"
+            stroke="#4facff" stroke-width="1.4"/>
+      <rect class="tire" x="190" y="74" width="18" height="32" rx="3"
+            fill="#ff6b9d" fill-opacity="${intensity(d.wRF).toFixed(2)}"
+            stroke="#ff6b9d" stroke-width="1.4"/>
+      <rect class="tire" x="37" y="230" width="24" height="40" rx="3"
+            fill="#4fffb0" fill-opacity="${intensity(d.wLR).toFixed(2)}"
+            stroke="#4fffb0" stroke-width="1.4"/>
+      <rect class="tire" x="189" y="230" width="24" height="40" rx="3"
+            fill="#ffcc4f" fill-opacity="${intensity(d.wRR).toFixed(2)}"
+            stroke="#ffcc4f" stroke-width="1.4"/>
+
+      <!-- Corner labels (small, above weights) -->
+      <text x="38" y="80" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#4facff" letter-spacing="0.1em">LF</text>
+      <text x="212" y="80" text-anchor="start" font-family="IBM Plex Mono" font-size="8" fill="#ff6b9d" letter-spacing="0.1em">RF</text>
+      <text x="33" y="236" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#4fffb0" letter-spacing="0.1em">LR</text>
+      <text x="217" y="236" text-anchor="start" font-family="IBM Plex Mono" font-size="8" fill="#ffcc4f" letter-spacing="0.1em">RR</text>
+
+      <!-- Weight values -->
+      <text x="38" y="97" text-anchor="end" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#4facff">${Math.round(d.wLF)}</text>
+      <text x="212" y="97" text-anchor="start" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#ff6b9d">${Math.round(d.wRF)}</text>
+      <text x="33" y="253" text-anchor="end" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#4fffb0">${Math.round(d.wLR)}</text>
+      <text x="217" y="253" text-anchor="start" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#ffcc4f">${Math.round(d.wRR)}</text>
+
+      <!-- Left-side bar (left edge of svg) -->
+      <rect x="6" y="120" width="6" height="100" fill="#1e1e24" stroke="#2a2a32" stroke-width="0.5"/>
+      <rect x="6" y="${(120 + (100 - d.leftPct)).toFixed(1)}" width="6" height="${(d.leftPct).toFixed(1)}"
+            fill="${leftHeavy ? '#47ffb2' : '#7a7a85'}" opacity="0.85"/>
+      <text x="9" y="115" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#7a7a85" letter-spacing="0.1em">L%</text>
+    </svg>
+
+    <div class="chassis-viz-stats">
+      <div class="chassis-viz-stat">
+        <div class="chassis-viz-stat-label">Cross</div>
+        <div class="chassis-viz-stat-val" style="color: ${crossColor};">${fmt(d.crossPct)}%</div>
+      </div>
+      <div class="chassis-viz-stat">
+        <div class="chassis-viz-stat-label">Left Side</div>
+        <div class="chassis-viz-stat-val" style="color: ${leftColor};">${fmt(d.leftPct)}%</div>
+      </div>
+    </div>
+  `;
+  $('chassis-viz').innerHTML = svg;
+}
+
 function renderChips(d) {
   $('chassis-chips').innerHTML = `
     <div class="chip"><span class="chip-label">Total</span><span class="chip-val">${Math.round(d.totalWt)} lbs</span></div>
@@ -1529,6 +1936,9 @@ function renderChips(d) {
 function renderSummaries(d) {
   $('chassis-summary').textContent =
     `${Math.round(d.totalWt)} lbs · ${fmt(d.nosePct)}% F · ${fmt(d.crossPct)}% X`;
+  const avgPsi = (d.psiLF + d.psiRF + d.psiLR + d.psiRR) / 4;
+  $('tire-summary').textContent =
+    `${fmt(avgPsi)} avg PSI · ${fmt(d.rearStagger, 2)}" stagger`;
   const tp = $('topProfile').options[$('topProfile').selectedIndex]?.text || '';
   $('wing-summary').textContent = wingsOn ? `${tp.split('(')[0].trim()} @ ${val('topAoA')}°` : 'Wings off';
   $('track-summary').textContent =
@@ -1571,15 +1981,21 @@ function update() {
   const apexLoads  = wheelLoads(d, 'apex');
   const exitLoads  = wheelLoads(d, 'exit');
 
-  const eS = scoreEntry(d);
-  const aS = scoreApex(d);
-  const xS = scoreExit(d);
+  // Dynamic in-phase percentages replace static scale-pad values for scoring
+  const pwEntry = dynPcts(entryLoads);
+  const pwApex  = dynPcts(apexLoads);
+  const pwExit  = dynPcts(exitLoads);
+
+  const eS = scoreEntry(d, pwEntry);
+  const aS = scoreApex(d, pwApex);
+  const xS = scoreExit(d, pwExit);
 
   renderPhase('entry', eS.score, eS.factors, entryLoads);
   renderPhase('apex',  aS.score, aS.factors, apexLoads);
   renderPhase('exit',  xS.score, xS.factors, exitLoads);
 
   renderChips(d);
+  renderChassisViz(d);
   renderSummaries(d);
   renderWingViz();
   renderSpringComputed();
@@ -1593,6 +2009,7 @@ function update() {
 const SAVEABLE_IDS = [
   'wLF','wRF','wLR','wRR','driverWt','wheelbase','trackF','trackR',
   'rhLF','rhRF','rhLR','rhRR','kLF','kRF','kLR','kRR',
+  'psiLF','psiRF','psiLR','psiRR','rearStagger','frontStagger',
   'topProfile','topAoA','topArea','noseProfile','noseAoA','noseArea',
   'spdEntry','spdApex','spdExit',
 ];
