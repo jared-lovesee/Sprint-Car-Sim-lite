@@ -628,14 +628,266 @@ input[type="text"]:focus { border-color: var(--accent); }
 }
 .chassis-viz svg .tire { transition: fill-opacity 0.2s ease; }
 
+/* Wing aero stats panel */
+.wing-aero-panel {
+  width: 300px;
+  min-width: 300px;
+  max-width: 300px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  padding: 12px 14px;
+}
+.wing-aero-panel-hdr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.wing-stat-block { margin-bottom: 12px; }
+.wing-stat-block:last-child { margin-bottom: 0; }
+.wing-stat-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wing-stat-sub span:last-child { color: var(--accent); letter-spacing: 0.04em; }
+.wing-stat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+}
+.wing-stat-table th {
+  color: var(--muted2);
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 0 5px 0;
+  text-align: right;
+}
+.wing-stat-table th:first-child { text-align: left; }
+.wing-stat-table td {
+  padding: 3px 0;
+  text-align: right;
+  color: var(--text);
+  font-weight: 500;
+}
+.wing-stat-table td:first-child { text-align: left; color: var(--muted); font-size: 10px; }
+.wing-stat-divider {
+  border: none;
+  border-top: 1px dashed var(--border2);
+  margin: 10px 0;
+}
+.wing-off-msg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted2);
+  text-align: center;
+  padding: 28px 0;
+  letter-spacing: 0.12em;
+}
+.wing-totals {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border2);
+}
+.wing-total-item { display: flex; flex-direction: column; gap: 3px; }
+.wing-total-item:last-child { text-align: right; }
+.wing-total-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.wing-total-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+}
+
 @media (max-width: 1100px) {
   .chassis-layout { flex-direction: column; }
   .chassis-viz { width: 100%; max-width: 280px; }
+  .wing-aero-panel { width: 100%; }
 }
 
 @media (max-width: 900px) {
   .phase-grid { grid-template-columns: 1fr; }
   main { padding: 12px; }
+}
+
+/* ── Print bar (screen only) ─────────────────────────────────── */
+.print-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 0;
+}
+.print-bar-hint {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ── Print sheet (hidden on screen, shown in print) ──────────── */
+#print-sheet { display: none; }
+
+@media print {
+  header, main, #toast, .print-bar { display: none !important; }
+  #print-sheet {
+    display: block !important;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    color: #111;
+    background: #fff;
+  }
+  .ps-header {
+    background: #0a0a0b;
+    padding: 16px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .ps-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #e8ff47;
+    text-transform: uppercase;
+  }
+  .ps-logo-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #777;
+    margin-top: 3px;
+  }
+  .ps-meta {
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: #888;
+    line-height: 1.7;
+  }
+  .ps-meta-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e8ff47;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .ps-body {
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .ps-row {
+    display: flex;
+    gap: 9px;
+  }
+  .ps-card {
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .ps-card-hdr {
+    background: #efefef;
+    padding: 4px 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #444;
+    border-bottom: 1px solid #ccc;
+  }
+  .ps-card-body { padding: 7px 9px; }
+  .ps-corner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-bottom: 7px;
+  }
+  .ps-corner {
+    text-align: center;
+    padding: 5px 3px;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    background: #fafafa;
+  }
+  .ps-corner-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .ps-corner-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.2;
+  }
+  .ps-corner-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: #777;
+    margin-top: 1px;
+  }
+  .ps-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+  }
+  .ps-table td {
+    padding: 2.5px 3px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  .ps-table td:first-child { color: #666; width: 50%; }
+  .ps-table td:last-child { font-weight: 500; }
+  .ps-wings-off {
+    padding: 7px 9px;
+    font-size: 9px;
+    color: #999;
+    font-style: italic;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .ps-notes-area { padding: 5px 9px; }
+  .ps-note-line { border-bottom: 1px solid #ddd; height: 21px; }
+  .ps-footer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: #bbb;
+    padding: 7px 20px;
+    border-top: 1px solid #e0e0e0;
+    letter-spacing: 0.06em;
+  }
+  @page { size: letter portrait; margin: 0.4in 0.45in; }
 }
 </style>
 </head>
@@ -646,7 +898,7 @@ input[type="text"]:focus { border-color: var(--accent); }
     <span class="logo">Sprint Car Sim</span>
     <span class="header-title">Balance Analyzer<span class="lite-badge">Lite</span></span>
   </div>
-  <a href="https://sprintcarsim.lemonsqueezy.com/checkout/buy/2e05ed2e-df2a-4068-8a25-4c56aa8314d9" target="_blank" rel="noopener" class="upgrade-btn" id="upgradeBtn">Upgrade to Pro →</a>
+  <span class="upgrade-btn" id="upgradeBtn" style="opacity:0.35;cursor:default;pointer-events:none;">Coming Soon</span>
 </header>
 
 <main>
@@ -847,47 +1099,51 @@ input[type="text"]:focus { border-color: var(--accent); }
     <span class="collapse-arrow">▼</span>
   </div>
   <div class="section-body">
+    <div class="chassis-layout">
+      <div class="chassis-inputs">
+        <div class="wing-toggle" id="wingToggle">
+          <button class="active" data-val="on" onclick="setWing('on')">Wings ON</button>
+          <button data-val="off" onclick="setWing('off')">Wings OFF</button>
+        </div>
 
-    <div class="wing-toggle" id="wingToggle">
-      <button class="active" data-val="on" onclick="setWing('on')">Wings ON</button>
-      <button data-val="off" onclick="setWing('off')">Wings OFF</button>
-    </div>
+        <div id="wingInputs">
+          <div class="wing-sub-hdr">Top Wing</div>
+          <div class="input-row">
+            <div class="input-group">
+              <label>Profile</label>
+              <select id="topProfile" onchange="update()"></select>
+              <div class="naca-viz" id="topProfileViz"></div>
+            </div>
+            <div class="input-group">
+              <label>AoA <span class="unit">°</span></label>
+              <input type="number" id="topAoA" value="10" step="0.5" onchange="update()">
+            </div>
+            <div class="input-group">
+              <label>Area <span class="unit">ft²</span></label>
+              <input type="number" id="topArea" value="14" step="0.5" onchange="update()">
+            </div>
+          </div>
 
-    <div id="wingInputs">
-      <div class="wing-sub-hdr">Top Wing</div>
-      <div class="input-row">
-        <div class="input-group">
-          <label>Profile</label>
-          <select id="topProfile" onchange="update()"></select>
-          <div class="naca-viz" id="topProfileViz"></div>
+          <div class="wing-sub-hdr" style="margin-top: 14px;">Nose Wing</div>
+          <div class="input-row">
+            <div class="input-group">
+              <label>Profile</label>
+              <select id="noseProfile" onchange="update()"></select>
+              <div class="naca-viz" id="noseProfileViz"></div>
+            </div>
+            <div class="input-group">
+              <label>AoA <span class="unit">°</span></label>
+              <input type="number" id="noseAoA" value="6" step="0.5" onchange="update()">
+            </div>
+            <div class="input-group">
+              <label>Area <span class="unit">ft²</span></label>
+              <input type="number" id="noseArea" value="4" step="0.25" onchange="update()">
+            </div>
+          </div>
         </div>
-        <div class="input-group">
-          <label>AoA <span class="unit">°</span></label>
-          <input type="number" id="topAoA" value="10" step="0.5" onchange="update()">
-        </div>
-        <div class="input-group">
-          <label>Area <span class="unit">ft²</span></label>
-          <input type="number" id="topArea" value="14" step="0.5" onchange="update()">
-        </div>
-      </div>
-
-      <div class="wing-sub-hdr" style="margin-top: 14px;">Nose Wing</div>
-      <div class="input-row">
-        <div class="input-group">
-          <label>Profile</label>
-          <select id="noseProfile" onchange="update()"></select>
-          <div class="naca-viz" id="noseProfileViz"></div>
-        </div>
-        <div class="input-group">
-          <label>AoA <span class="unit">°</span></label>
-          <input type="number" id="noseAoA" value="6" step="0.5" onchange="update()">
-        </div>
-        <div class="input-group">
-          <label>Area <span class="unit">ft²</span></label>
-          <input type="number" id="noseArea" value="4" step="0.25" onchange="update()">
-        </div>
-      </div>
-    </div>
+      </div><!-- /chassis-inputs -->
+      <div class="wing-aero-panel" id="wing-aero-panel"></div>
+    </div><!-- /chassis-layout -->
   </div>
 </div>
 
@@ -1026,9 +1282,53 @@ input[type="text"]:focus { border-color: var(--accent); }
   </div>
 </div>
 
+<!-- ── Print bar ─────────────────────────────────────────────── -->
+<div class="print-bar">
+  <button class="btn" onclick="printSetup()">Print Setup Sheet</button>
+  <span class="print-bar-hint">Exports a print-ready PDF of all current settings</span>
+</div>
+
 </main>
 
 <div class="toast" id="toast">Saved</div>
+
+<!-- ── Print Sheet (hidden on screen, shown when printing) ───── -->
+<div id="print-sheet">
+  <div class="ps-header">
+    <div>
+      <div class="ps-logo">Sprint Car Sim</div>
+      <div class="ps-logo-sub">Setup Sheet &middot; Lite Edition</div>
+    </div>
+    <div class="ps-meta" id="ps-meta"></div>
+  </div>
+  <div class="ps-body">
+    <div class="ps-row">
+      <div class="ps-card" style="flex:5;">
+        <div class="ps-card-hdr">Corner Weights &amp; Chassis</div>
+        <div id="ps-chassis"></div>
+      </div>
+      <div class="ps-card" style="flex:3;">
+        <div class="ps-card-hdr">Tires</div>
+        <div id="ps-tires"></div>
+      </div>
+    </div>
+    <div class="ps-row">
+      <div class="ps-card" style="flex:1;">
+        <div class="ps-card-hdr">Wing Package</div>
+        <div id="ps-wing"></div>
+      </div>
+      <div class="ps-card" style="flex:1;">
+        <div class="ps-card-hdr">Track &amp; Conditions</div>
+        <div id="ps-track"></div>
+      </div>
+    </div>
+    <div class="ps-card">
+      <div class="ps-card-hdr">Notes</div>
+      <div id="ps-notes"></div>
+    </div>
+  </div>
+  <div class="ps-footer">sprintcarsim.com &nbsp;&middot;&nbsp; Sprint Car Sim Lite &nbsp;&middot;&nbsp; Generated with Sprint Car Sim</div>
+</div>
 
 <script>
 /* ========================================================================
@@ -1081,34 +1381,35 @@ const PROFILE_ORDER = ["0012","2412","4412","6412","4415","2415","0015","23012",
 // wheelLoads() — same approach as Pro.  Bases are tuned to in-phase values,
 // not static scale-pad readings (which run ~5-7% higher for cross).
 const SCORE_WEIGHTS = {
-  entry_cross_base: 45,    entry_cross_wt: 0,
-  entry_nose_base:  42,    entry_nose_wt:  0.5,
-  entry_frontRC_base: 6,   entry_frontRC_wt: 0.6,
-  entry_rhSplitF_wt:  0.4,
-  entry_noseAero_wt:  0.4, entry_topAero_wt: -0.1,
-  entry_rake_wt:      0.5,
-  entry_stagger_base: 3.2, entry_stagger_wt: -0.7,
-  entry_rearPsiSplit_wt: -0.7,
+  entry_cross_base: 45,    entry_cross_wt: 4,
+  entry_rear_base:  62,    entry_rear_wt:  1.0,
+  entry_frontRC_base: 6,   entry_frontRC_wt: 1.2,
+  entry_rhSplitF_wt:  0.8,
+  entry_noseAero_wt:  0.8, entry_topAero_wt: -0.2,
+  entry_rake_wt:      1.0,
+  entry_stagger_base: 3.2, entry_stagger_wt: -1.4,
+  entry_rearPsiSplit_wt: -1.4,
 
-  apex_cross_base: 42,     apex_cross_wt: 2,
-  apex_left_base:  36,     apex_left_wt:  0.5,
-  apex_rollDist_base: 0.48,apex_rollDist_wt: 6.5,
-  apex_rearRC_base: 11,    apex_rearRC_wt: -2,
-  apex_topAero_wt: -0.15,  apex_noseAero_wt: 0.3,
+  apex_cross_base: 42,     apex_cross_wt: 4,
+  apex_left_base:  36,     apex_left_wt:  1.0,
+  apex_rollDist_base: 0.48,apex_rollDist_wt: 13,
+  apex_rearRC_base: 11,    apex_rearRC_wt: -4,
+  apex_rear_base:  60,     apex_rear_wt: -1.0,
+  apex_topAero_wt: -0.30,  apex_noseAero_wt: 0.6,
   apex_banking_wt: 0,
-  apex_rearPsiSplit_wt: -0.6,
+  apex_rearPsiSplit_wt: -1.2,
   // Yaw offset: at apex the car is yawed 11-15°, generating a natural
   // loosening moment.  Pro handles this via calcPhaseWeights at reference
   // yaw; Lite applies a fixed bias to prevent apex from pegging "Very Tight."
   apex_yaw_offset: -13,
 
-  exit_rear_base: 68,      exit_rear_wt: 0.5,
-  exit_cross_base: 47.5,   exit_cross_wt: 2,
-  exit_rearRC_base: 11,    exit_rearRC_wt: -0.5,
-  exit_rhSplitR_wt: -0.7,
-  exit_topAero_wt: 0.3,
-  exit_stagger_base: 2.5,  exit_stagger_wt: -0.5,
-  exit_rearPsiSplit_wt: -0.5,
+  exit_rear_base: 62,      exit_rear_wt: 1.0,
+  exit_cross_base: 47.5,   exit_cross_wt: 4,
+  exit_rearRC_base: 11,    exit_rearRC_wt: -1.0,
+  exit_rhSplitR_wt: -1.4,
+  exit_topAero_wt: 0.6,
+  exit_stagger_base: 2.5,  exit_stagger_wt: -1.0,
+  exit_rearPsiSplit_wt: -1.0,
 };
 
 const STORAGE_KEY = 'sprintCarSimLite_setups';
@@ -1561,9 +1862,9 @@ function scoreEntry(d, pw) {
   const crossS = crossDev * W.entry_cross_wt;
   s += crossS; pushF(factors, 'Cross Weight', fmt(pw.crossPct) + '%', crossS, 0.5);
 
-  const noseDev = pw.nosePct - W.entry_nose_base;
-  const noseS = noseDev * W.entry_nose_wt;
-  s += noseS; pushF(factors, 'Nose Weight', fmt(pw.nosePct) + '%', noseS, 0.5);
+  const rearDev = pw.rearPct - W.entry_rear_base;
+  const rearS = rearDev * W.entry_rear_wt;
+  s += rearS; pushF(factors, 'Rear Weight', fmt(pw.rearPct) + '%', rearS, 0.5);
 
   const frontRCDev = d.frontRC - W.entry_frontRC_base;
   const frontRCS = frontRCDev * W.entry_frontRC_wt;
@@ -1624,6 +1925,10 @@ function scoreApex(d, pw) {
   if (Math.abs(leftDev) > 1) {
     pushF(factors, 'Left Side', fmt(pw.leftPct) + '%', leftS, 0.5);
   }
+
+  const rearDev = pw.rearPct - W.apex_rear_base;
+  const rearS = rearDev * W.apex_rear_wt;
+  s += rearS; pushF(factors, 'Rear Weight', fmt(pw.rearPct) + '%', rearS, 0.5);
 
   const rollDev = d.rollStiffDist - W.apex_rollDist_base;
   const rollS = rollDev * W.apex_rollDist_wt;
@@ -1756,162 +2061,76 @@ function renderChassisViz(d) {
   const minL = Math.min(...loads);
   const maxL = Math.max(...loads);
   const range = Math.max(maxL - minL, 1);
-  // 0.30 (lightest tire) to 1.0 (heaviest tire)
-  const intensity = (v) => 0.30 + 0.70 * ((v - minL) / range);
-
-  // Cross weight diagonal: cross % is (RF + LR) / total.
-  // > 50% means the RF-LR diagonal is heavy ("more cross" — typical for left-turn oval)
-  // < 50% means the LF-RR diagonal is heavy ("less cross")
+  const intensity = (v) => (0.30 + 0.70 * ((v - minL) / range)).toFixed(2);
   const heavyDiag = d.crossPct >= 50 ? 'cross' : 'anti';
-  const crossDelta = Math.abs(d.crossPct - 50);
-  const crossActive = crossDelta > 0.3;
-
-  // Left side weight: > 50% is left-heavy (typical), 50% is balanced
-  const leftHeavy = d.leftPct > 50;
-
-  // Color cross % to match the existing scoring vibe: yellow accent if elevated, alert red if very high
-  const crossColor =
-    d.crossPct >= 53 ? 'var(--alert)' :
-    d.crossPct >= 51 ? 'var(--warn)' :
-    d.crossPct <= 47 ? 'var(--lf)' :
-    'var(--accent)';
-  const leftColor =
-    d.leftPct >= 60 ? 'var(--accent)' :
-    d.leftPct <= 50 ? 'var(--alert)' :
-    'var(--good)';
-
-  const dim = 'rgba(120,120,135,0.25)';
-  const hot = 'rgba(232,255,71,0.85)';
-  const diagLF_RR = heavyDiag === 'anti' && crossActive ? hot : dim;
+  const crossActive = Math.abs(d.crossPct - 50) > 0.3;
+  const dim = 'rgba(120,120,135,0.18)';
+  const hot = 'rgba(232,255,71,0.75)';
+  const diagLF_RR = heavyDiag === 'anti'  && crossActive ? hot : dim;
   const diagRF_LR = heavyDiag === 'cross' && crossActive ? hot : dim;
-  const diagLF_RR_w = heavyDiag === 'anti' && crossActive ? 1.6 : 1;
-  const diagRF_LR_w = heavyDiag === 'cross' && crossActive ? 1.6 : 1;
 
-  const svg = `
+  const crossColor = d.crossPct >= 53 ? 'var(--alert)' : d.crossPct >= 51 ? 'var(--warn)' : d.crossPct <= 47 ? 'var(--lf)' : 'var(--accent)';
+  const leftColor  = d.leftPct  <= 50 ? 'var(--alert)' : 'var(--good)';
+  const noseColor  = d.nosePct  >= 45 ? 'var(--alert)' : d.nosePct >= 42 ? 'var(--warn)' : 'var(--accent)';
+
+  $('chassis-viz').innerHTML = `
     <div class="chassis-viz-hdr">
       <span>Weight Distribution</span>
-      <span style="color: var(--muted2); font-size: 9px;">▲ FRONT</span>
+      <span style="color:var(--muted2);font-size:9px;">▲ FRONT</span>
     </div>
-    <svg viewBox="0 0 250 340" xmlns="http://www.w3.org/2000/svg"
+    <svg viewBox="0 0 220 210" xmlns="http://www.w3.org/2000/svg"
          style="width:100%;height:auto;display:block;">
-      <!-- Direction arrow above nose -->
-      <path d="M 125 6 L 119 16 L 131 16 Z" fill="#7a7a85"/>
 
-      <!-- Side nerf bars (outboard of the tires — bumper protection) -->
-      <path d="M 40 76 Q 26 80, 24 100 L 24 240 Q 26 268, 40 272"
-            fill="none" stroke="#5a5a64" stroke-width="1.2" stroke-linecap="round"/>
-      <path d="M 210 76 Q 224 80, 226 100 L 226 240 Q 224 268, 210 272"
-            fill="none" stroke="#5a5a64" stroke-width="1.2" stroke-linecap="round"/>
+      <!-- Car body outline -->
+      <rect x="78" y="32" width="64" height="146" rx="6"
+            fill="#0d0d10" stroke="#2a2a32" stroke-width="1"/>
+      <!-- Front direction arrow -->
+      <path d="M 110 10 L 104 22 L 116 22 Z" fill="#555560"/>
 
-      <!-- Body silhouette (sharp nose, wider middle, narrow tail) -->
-      <path d="M 125 22
-               L 109 60
-               L 100 70
-               L 98 110
-               L 98 220
-               L 102 248
-               L 108 282
-               L 142 282
-               L 148 248
-               L 152 220
-               L 152 110
-               L 150 70
-               L 141 60 Z"
-            fill="#0d0d10" stroke="#3a3a44" stroke-width="1.1"/>
+      <!-- Cross-weight diagonals (LF-RR and RF-LR) -->
+      <line x1="46" y1="58" x2="174" y2="158" stroke="${diagLF_RR}" stroke-width="1.2" stroke-dasharray="4,3"/>
+      <line x1="174" y1="58" x2="46" y2="158" stroke="${diagRF_LR}" stroke-width="1.2" stroke-dasharray="4,3"/>
 
-      <!-- Front bumper crossbar -->
-      <line x1="109" y1="60" x2="141" y2="60" stroke="#5a5a64" stroke-width="1.2" stroke-linecap="round"/>
+      <!-- FRONT tires (smaller) -->
+      <rect x="32" y="44" width="20" height="30" rx="3"
+            fill="#4facff" fill-opacity="${intensity(d.wLF)}" stroke="#4facff" stroke-width="1.4"/>
+      <rect x="168" y="44" width="20" height="30" rx="3"
+            fill="#ff6b9d" fill-opacity="${intensity(d.wRF)}" stroke="#ff6b9d" stroke-width="1.4"/>
 
-      <!-- Roll cage: 2 long side bars + front/rear hoops (top-down) -->
-      <line x1="112" y1="118" x2="112" y2="202" stroke="#6a6a74" stroke-width="1.6"/>
-      <line x1="138" y1="118" x2="138" y2="202" stroke="#6a6a74" stroke-width="1.6"/>
-      <line x1="112" y1="118" x2="138" y2="118" stroke="#6a6a74" stroke-width="1.4"/>
-      <line x1="112" y1="202" x2="138" y2="202" stroke="#6a6a74" stroke-width="1.4"/>
+      <!-- REAR tires (bigger) -->
+      <rect x="28" y="142" width="26" height="38" rx="3"
+            fill="#4fffb0" fill-opacity="${intensity(d.wLR)}" stroke="#4fffb0" stroke-width="1.4"/>
+      <rect x="166" y="142" width="26" height="38" rx="3"
+            fill="#ffcc4f" fill-opacity="${intensity(d.wRR)}" stroke="#ffcc4f" stroke-width="1.4"/>
 
-      <!-- Cockpit shading inside cage -->
-      <rect x="113" y="119" width="24" height="82" fill="#15151a" opacity="0.7"/>
+      <!-- Corner labels -->
+      <text x="30" y="50" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#4facff" letter-spacing="0.1em">LF</text>
+      <text x="190" y="50" text-anchor="start" font-family="IBM Plex Mono" font-size="8" fill="#ff6b9d" letter-spacing="0.1em">RF</text>
+      <text x="25" y="148" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#4fffb0" letter-spacing="0.1em">LR</text>
+      <text x="195" y="148" text-anchor="start" font-family="IBM Plex Mono" font-size="8" fill="#ffcc4f" letter-spacing="0.1em">RR</text>
 
-      <!-- Driver helmet (front of cockpit) -->
-      <circle cx="125" cy="150" r="9" fill="#1a1a20" stroke="#8a8a95" stroke-width="1"/>
-      <circle cx="125" cy="150" r="5" fill="#3a3a44"/>
-      <line x1="119" y1="149" x2="131" y2="149" stroke="#8a8a95" stroke-width="0.9" stroke-linecap="round"/>
-
-      <!-- Engine block (behind driver, in front of rear axle) -->
-      <rect x="108" y="206" width="34" height="34" rx="1.5" fill="#1a1a20" stroke="#5a5a64" stroke-width="1"/>
-      <line x1="117" y1="210" x2="117" y2="237" stroke="#3a3a44" stroke-width="0.6"/>
-      <line x1="125" y1="210" x2="125" y2="237" stroke="#3a3a44" stroke-width="0.6"/>
-      <line x1="133" y1="210" x2="133" y2="237" stroke="#3a3a44" stroke-width="0.6"/>
-
-      <!-- Exhaust headers (signature curls on left side - 4 primaries into a collector) -->
-      <path d="M 108 211 Q 94 214, 88 222 Q 84 230, 90 236"
-            fill="none" stroke="#b8b8c2" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M 108 220 Q 90 222, 82 230 Q 80 240, 88 244"
-            fill="none" stroke="#b8b8c2" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M 108 230 Q 88 232, 80 240 Q 80 250, 88 252"
-            fill="none" stroke="#b8b8c2" stroke-width="1.6" stroke-linecap="round"/>
-      <!-- Collector pipe heading rearward -->
-      <path d="M 86 250 Q 84 260, 86 274" fill="none" stroke="#b8b8c2" stroke-width="2" stroke-linecap="round"/>
-
-      <!-- Quick-change rear end housing -->
-      <circle cx="125" cy="250" r="6" fill="#1a1a20" stroke="#6a6a74" stroke-width="0.9"/>
-      <circle cx="125" cy="250" r="2" fill="#5a5a64"/>
-
-      <!-- Front axle (dashed) -->
-      <line x1="60" y1="90" x2="190" y2="90" stroke="#2a2a32" stroke-width="1" stroke-dasharray="3,2"/>
-      <!-- Rear axle (dashed) -->
-      <line x1="55" y1="250" x2="195" y2="250" stroke="#2a2a32" stroke-width="1" stroke-dasharray="3,2"/>
-
-      <!-- Cross-weight diagonals -->
-      <line x1="51" y1="90"  x2="201" y2="250"
-            stroke="${diagLF_RR}" stroke-width="${diagLF_RR_w}" stroke-dasharray="4,3"/>
-      <line x1="199" y1="90" x2="49"  y2="250"
-            stroke="${diagRF_LR}" stroke-width="${diagRF_LR_w}" stroke-dasharray="4,3"/>
-
-      <!-- Tires (front: smaller; rear: larger) -->
-      <rect class="tire" x="42" y="74" width="18" height="32" rx="3"
-            fill="#4facff" fill-opacity="${intensity(d.wLF).toFixed(2)}"
-            stroke="#4facff" stroke-width="1.4"/>
-      <rect class="tire" x="190" y="74" width="18" height="32" rx="3"
-            fill="#ff6b9d" fill-opacity="${intensity(d.wRF).toFixed(2)}"
-            stroke="#ff6b9d" stroke-width="1.4"/>
-      <rect class="tire" x="37" y="230" width="24" height="40" rx="3"
-            fill="#4fffb0" fill-opacity="${intensity(d.wLR).toFixed(2)}"
-            stroke="#4fffb0" stroke-width="1.4"/>
-      <rect class="tire" x="189" y="230" width="24" height="40" rx="3"
-            fill="#ffcc4f" fill-opacity="${intensity(d.wRR).toFixed(2)}"
-            stroke="#ffcc4f" stroke-width="1.4"/>
-
-      <!-- Corner labels (small, above weights) -->
-      <text x="38" y="80" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#4facff" letter-spacing="0.1em">LF</text>
-      <text x="212" y="80" text-anchor="start" font-family="IBM Plex Mono" font-size="8" fill="#ff6b9d" letter-spacing="0.1em">RF</text>
-      <text x="33" y="236" text-anchor="end" font-family="IBM Plex Mono" font-size="8" fill="#4fffb0" letter-spacing="0.1em">LR</text>
-      <text x="217" y="236" text-anchor="start" font-family="IBM Plex Mono" font-size="8" fill="#ffcc4f" letter-spacing="0.1em">RR</text>
-
-      <!-- Weight values -->
-      <text x="38" y="97" text-anchor="end" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#4facff">${Math.round(d.wLF)}</text>
-      <text x="212" y="97" text-anchor="start" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#ff6b9d">${Math.round(d.wRF)}</text>
-      <text x="33" y="253" text-anchor="end" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#4fffb0">${Math.round(d.wLR)}</text>
-      <text x="217" y="253" text-anchor="start" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#ffcc4f">${Math.round(d.wRR)}</text>
-
-      <!-- Left-side bar (left edge of svg) -->
-      <rect x="6" y="120" width="6" height="100" fill="#1e1e24" stroke="#2a2a32" stroke-width="0.5"/>
-      <rect x="6" y="${(120 + (100 - d.leftPct)).toFixed(1)}" width="6" height="${(d.leftPct).toFixed(1)}"
-            fill="${leftHeavy ? '#47ffb2' : '#7a7a85'}" opacity="0.85"/>
-      <text x="9" y="115" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="#7a7a85" letter-spacing="0.1em">L%</text>
+      <!-- Corner weight values -->
+      <text x="30" y="66" text-anchor="end" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#4facff">${Math.round(d.wLF)}</text>
+      <text x="190" y="66" text-anchor="start" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#ff6b9d">${Math.round(d.wRF)}</text>
+      <text x="25" y="164" text-anchor="end" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#4fffb0">${Math.round(d.wLR)}</text>
+      <text x="195" y="164" text-anchor="start" font-family="IBM Plex Mono" font-size="13" font-weight="600" fill="#ffcc4f">${Math.round(d.wRR)}</text>
     </svg>
 
-    <div class="chassis-viz-stats">
-      <div class="chassis-viz-stat">
-        <div class="chassis-viz-stat-label">Cross</div>
-        <div class="chassis-viz-stat-val" style="color: ${crossColor};">${fmt(d.crossPct)}%</div>
-      </div>
+    <div class="chassis-viz-stats" style="grid-template-columns:1fr 1fr 1fr;">
       <div class="chassis-viz-stat">
         <div class="chassis-viz-stat-label">Left Side</div>
-        <div class="chassis-viz-stat-val" style="color: ${leftColor};">${fmt(d.leftPct)}%</div>
+        <div class="chassis-viz-stat-val" style="color:${leftColor};">${fmt(d.leftPct)}%</div>
+      </div>
+      <div class="chassis-viz-stat">
+        <div class="chassis-viz-stat-label">Nose</div>
+        <div class="chassis-viz-stat-val" style="color:${noseColor};">${fmt(d.nosePct)}%</div>
+      </div>
+      <div class="chassis-viz-stat">
+        <div class="chassis-viz-stat-label">Cross</div>
+        <div class="chassis-viz-stat-val" style="color:${crossColor};">${fmt(d.crossPct)}%</div>
       </div>
     </div>
   `;
-  $('chassis-viz').innerHTML = svg;
 }
 
 function renderChips(d) {
@@ -1947,6 +2166,72 @@ function renderSummaries(d) {
   $('entry-speed').textContent = `${val('spdEntry')} mph`;
   $('apex-speed').textContent  = `${val('spdApex')} mph`;
   $('exit-speed').textContent  = `${val('spdExit')} mph`;
+}
+
+function renderWingStats(d) {
+  const panel = $('wing-aero-panel');
+  if (!panel) return;
+
+  if (!wingsOn) {
+    panel.innerHTML = `<div class="wing-off-msg">WINGS OFF</div>`;
+    return;
+  }
+
+  const lb = (v) => (v == null || v < 0.05) ? '—' : Math.round(v) + ' lb';
+  const phases = [
+    { label: 'Entry', speed: d.spdE, top: d.topAero.entry,  nose: d.noseAero.entry  },
+    { label: 'Apex',  speed: d.spdA, top: d.topAero.apex,   nose: d.noseAero.apex   },
+    { label: 'Exit',  speed: d.spdX, top: d.topAero.exit,   nose: d.noseAero.exit   },
+  ];
+
+  const rows = (key) => phases.map(p => `
+    <tr>
+      <td>${p.label}&nbsp;<span style="color:var(--muted2);font-size:9px;">${p.speed}mph</span></td>
+      <td style="color:var(--good);">${lb(p[key].downforce)}</td>
+      <td style="color:var(--warn);">${lb(p[key].dragForce)}</td>
+    </tr>`).join('');
+
+  const totalDF   = (d.topAero.exit.downforce  || 0) + (d.noseAero.exit.downforce  || 0);
+  const totalDrag = (d.topAero.exit.dragForce   || 0) + (d.noseAero.exit.dragForce   || 0);
+
+  panel.innerHTML = `
+    <div class="wing-aero-panel-hdr">Wing Aero Output</div>
+
+    <div class="wing-stat-block">
+      <div class="wing-stat-sub">
+        <span>Top Wing</span>
+        <span>${val('topAoA')}° &middot; ${val('topArea')} ft²</span>
+      </div>
+      <table class="wing-stat-table">
+        <thead><tr><th>Phase</th><th>Downforce</th><th>Drag</th></tr></thead>
+        <tbody>${rows('top')}</tbody>
+      </table>
+    </div>
+
+    <hr class="wing-stat-divider"/>
+
+    <div class="wing-stat-block">
+      <div class="wing-stat-sub">
+        <span>Nose Wing</span>
+        <span>${val('noseAoA')}° &middot; ${val('noseArea')} ft²</span>
+      </div>
+      <table class="wing-stat-table">
+        <thead><tr><th>Phase</th><th>Downforce</th><th>Drag</th></tr></thead>
+        <tbody>${rows('nose')}</tbody>
+      </table>
+    </div>
+
+    <div class="wing-totals">
+      <div class="wing-total-item">
+        <span class="wing-total-label">Total DF @ Exit</span>
+        <span class="wing-total-val" style="color:var(--good);">${lb(totalDF)}</span>
+      </div>
+      <div class="wing-total-item">
+        <span class="wing-total-label">Total Drag @ Exit</span>
+        <span class="wing-total-val" style="color:var(--warn);">${lb(totalDrag)}</span>
+      </div>
+    </div>
+  `;
 }
 
 function renderWingViz() {
@@ -1996,6 +2281,7 @@ function update() {
 
   renderChips(d);
   renderChassisViz(d);
+  renderWingStats(d);
   renderSummaries(d);
   renderWingViz();
   renderSpringComputed();
@@ -2115,6 +2401,132 @@ function resetDefaults() {
   $('setupName').value = '';
   $('setupList').value = '';
   toast('Reset to defaults');
+}
+
+// ── Print ────────────────────────────────────────────────────────────────
+function printSetup() {
+  const d = readData();
+  const setupName = $('setupName').value.trim() || 'Unnamed Setup';
+  const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const fmt2 = (v) => parseFloat(v).toFixed(2);
+  const lb = (v) => (v == null || v < 0.05) ? '—' : Math.round(v) + ' lb';
+  const springLabel = (corner) => {
+    const isRear = corner === 'LR' || corner === 'RR';
+    return (isRear ? springMode.rear : springMode.front) === 'torsion'
+      ? 'Torsion' : val('k' + corner) + ' lb/in';
+  };
+
+  $('ps-meta').innerHTML = `
+    <div class="ps-meta-name">${setupName}</div>
+    <div>${dateStr}</div>`;
+
+  $('ps-chassis').innerHTML = `
+    <div class="ps-card-body">
+      <div class="ps-corner-grid">
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#2060a0;">LF</div>
+          <div class="ps-corner-val">${val('wLF')}</div>
+          <div class="ps-corner-sub">${springLabel('LF')} &middot; RH ${val('rhLF')}"</div>
+        </div>
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#a03060;">RF</div>
+          <div class="ps-corner-val">${val('wRF')}</div>
+          <div class="ps-corner-sub">${springLabel('RF')} &middot; RH ${val('rhRF')}"</div>
+        </div>
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#1a7a50;">LR</div>
+          <div class="ps-corner-val">${val('wLR')}</div>
+          <div class="ps-corner-sub">${springLabel('LR')} &middot; RH ${val('rhLR')}"</div>
+        </div>
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#907020;">RR</div>
+          <div class="ps-corner-val">${val('wRR')}</div>
+          <div class="ps-corner-sub">${springLabel('RR')} &middot; RH ${val('rhRR')}"</div>
+        </div>
+      </div>
+      <table class="ps-table">
+        <tr><td>Total Weight</td><td>${Math.round(d.totalWt)} lbs (driver ${val('driverWt')} lb)</td></tr>
+        <tr><td>Left Side %</td><td>${fmt2(d.leftPct)}%</td></tr>
+        <tr><td>Nose Weight %</td><td>${fmt2(d.nosePct)}%</td></tr>
+        <tr><td>Cross Weight %</td><td>${fmt2(d.crossPct)}%</td></tr>
+        <tr><td>Wheelbase</td><td>${val('wheelbase')}"</td></tr>
+        <tr><td>Track Width</td><td>Front ${val('trackF')}" &middot; Rear ${val('trackR')}"</td></tr>
+      </table>
+    </div>`;
+
+  $('ps-tires').innerHTML = `
+    <div class="ps-card-body">
+      <div class="ps-corner-grid">
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#2060a0;">LF</div>
+          <div class="ps-corner-val" style="font-size:15px;">${val('psiLF')}</div>
+          <div class="ps-corner-sub">PSI</div>
+        </div>
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#a03060;">RF</div>
+          <div class="ps-corner-val" style="font-size:15px;">${val('psiRF')}</div>
+          <div class="ps-corner-sub">PSI</div>
+        </div>
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#1a7a50;">LR</div>
+          <div class="ps-corner-val" style="font-size:15px;">${val('psiLR')}</div>
+          <div class="ps-corner-sub">PSI</div>
+        </div>
+        <div class="ps-corner">
+          <div class="ps-corner-label" style="color:#907020;">RR</div>
+          <div class="ps-corner-val" style="font-size:15px;">${val('psiRR')}</div>
+          <div class="ps-corner-sub">PSI</div>
+        </div>
+      </div>
+      <table class="ps-table">
+        <tr><td>Rear Stagger</td><td>${val('rearStagger')}"</td></tr>
+        <tr><td>Front Stagger</td><td>${val('frontStagger')}"</td></tr>
+      </table>
+    </div>`;
+
+  if (wingsOn) {
+    const topKey  = val('topProfile');
+    const noseKey = val('noseProfile');
+    const topLabel  = (PROFILES[topKey]  || {}).label || topKey;
+    const noseLabel = (PROFILES[noseKey] || {}).label || noseKey;
+    $('ps-wing').innerHTML = `
+      <div class="ps-card-body">
+        <table class="ps-table">
+          <tr><td>Top Profile</td><td>${topLabel}</td></tr>
+          <tr><td>Top AoA / Area</td><td>${val('topAoA')}° / ${val('topArea')} ft²</td></tr>
+          <tr><td>Top DF (apex)</td><td>${lb(d.topAero.apex.downforce)}</td></tr>
+          <tr><td>Top Drag (apex)</td><td>${lb(d.topAero.apex.dragForce)}</td></tr>
+          <tr><td style="padding-top:4px;">Nose Profile</td><td>${noseLabel}</td></tr>
+          <tr><td>Nose AoA / Area</td><td>${val('noseAoA')}° / ${val('noseArea')} ft²</td></tr>
+          <tr><td>Nose DF (apex)</td><td>${lb(d.noseAero.apex.downforce)}</td></tr>
+          <tr><td>Nose Drag (apex)</td><td>${lb(d.noseAero.apex.dragForce)}</td></tr>
+        </table>
+      </div>`;
+  } else {
+    $('ps-wing').innerHTML = `<div class="ps-wings-off">Wings off — no aero data</div>`;
+  }
+
+  $('ps-track').innerHTML = `
+    <div class="ps-card-body">
+      <table class="ps-table">
+        <tr><td>Track Size</td><td>${TRACK_SIZES[segState.trackSize].label}</td></tr>
+        <tr><td>Line</td><td>${segState.line.charAt(0).toUpperCase() + segState.line.slice(1)}</td></tr>
+        <tr><td>Bank</td><td>${BANK_ANGLES[segState.bank].label}</td></tr>
+        <tr><td>Entry Speed</td><td>${val('spdEntry')} mph</td></tr>
+        <tr><td>Apex Speed</td><td>${val('spdApex')} mph</td></tr>
+        <tr><td>Exit Speed</td><td>${val('spdExit')} mph</td></tr>
+        <tr><td>Entry G</td><td>${fmt2(d.gEntry)}</td></tr>
+        <tr><td>Apex G</td><td>${fmt2(d.gApex)}</td></tr>
+        <tr><td>Exit G</td><td>${fmt2(d.gExit)}</td></tr>
+      </table>
+    </div>`;
+
+  $('ps-notes').innerHTML =
+    '<div class="ps-notes-area">' +
+    Array(14).fill('<div class="ps-note-line"></div>').join('') +
+    '</div>';
+
+  window.print();
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────
